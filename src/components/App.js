@@ -9,6 +9,8 @@ class App extends Component {
           
           <h2>StopVK</h2>
         </div>
+
+        
         <p className="App-intro">
           Эта программа поможет Вам удалиться из социальной сети Вконтакте. 
         </p>
