@@ -14,6 +14,7 @@ class App extends Component {
         </p>
         <p>Все что Вам нужно сделать для начала работы:</p>
         <button className="loginbtn">ВОЙТИ</button>
+        <div>тест</div>
       </div>
     );
   }
