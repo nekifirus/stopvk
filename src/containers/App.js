@@ -10,6 +10,7 @@ class App extends Component {
     const { user } = this.props
     const { handleLogin } = this.props.userActions
     const { handleLogout } = this.props.userActions
+    const { handleCheckstatus } = this.props.userActions
 
 
     return <div className="App">
@@ -18,7 +19,11 @@ class App extends Component {
         </div>
 
         
-       <User name={user.name} handleLogin={handleLogin} handleLogout={handleLogout} error={user.error} />
+       <User  name={user.name} 
+              handleLogin={handleLogin} 
+              handleLogout={handleLogout} 
+              handleCheckstatus={handleCheckstatus}
+              error={user.error} />
 
       </div>
   }

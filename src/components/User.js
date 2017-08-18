@@ -1,9 +1,15 @@
 import React, { Component } from 'react'
 
 export default class User extends Component {
+  
+  componentWillMount() {
+    this.props.handleCheckstatus();
+  }
+
   render() {
     const { name, error } = this.props
     let template
+  
 
     if (name) {
       template = <p>Привет, {name}! <button className="logoutbtn" onClick={this.props.handleLogout}>Выйти</button></p>

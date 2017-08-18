@@ -19,7 +19,7 @@ export default function user(state = initialState, action) {
       return { ...state, error: action.payload.message }
 
     case LOGOUT:
-      return { ...state, initialState}
+      return { ...state, name: action.payload }
 
     default:
       return state
