@@ -66,7 +66,7 @@ export function handleCheckstatus() {
           payload: username
         })
     
-      };
+      }
     }) 
   }
 }
