@@ -11,8 +11,13 @@ class App extends Component {
     const { handleLogin } = this.props.userActions
 
 
-    return <div>
-        <User name={user.name} handleLogin={handleLogin} error={user.error} />
+    return <div className="App">
+        <div className="App-header">
+          <h2>StopVK</h2>
+        </div>
+
+        
+       <User name={user.name} handleLogin={handleLogin} handleLogout={handleLogout} error={user.error} />
 
       </div>
   }

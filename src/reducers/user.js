@@ -1,6 +1,7 @@
 import {
   LOGIN_SUCCESS,
-  LOGIN_FAIL
+  LOGIN_FAIL,
+  LOGOUT
 } from '../constants/User';
 
 const initialState = {
@@ -16,6 +17,9 @@ export default function user(state = initialState, action) {
 
     case LOGIN_FAIL:
       return { ...state, error: action.payload.message }
+
+    case LOGOUT:
+      return { ...state, initialState}
 
     default:
       return state

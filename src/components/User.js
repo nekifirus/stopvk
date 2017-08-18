@@ -6,9 +6,15 @@ export default class User extends Component {
     let template
 
     if (name) {
-      template = <p>Привет, {name}! </p>
+      template = <p>Привет, {name}! <button className="logoutbtn" onClick={this.props.handleLpout}Выйти</button></p>
     } else {
-      template = <button className="loginbtn" onClick={this.props.handleLogin}>ВОЙТИ</button>
+      template = <div>
+          <p className="App-intro">
+            Эта программа поможет Вам удалиться из социальной сети Вконтакте. 
+          </p>
+          <p>Все что Вам нужно сделать для начала работы:</p>
+          <button className="loginbtn" onClick={this.props.handleLogin}>ВОЙТИ</button>
+        </div>
     }
 
     return <div className='user'>

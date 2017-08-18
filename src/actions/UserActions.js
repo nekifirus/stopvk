@@ -1,7 +1,8 @@
 import {
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
-  LOGIN_FAIL
+  LOGIN_FAIL,
+  LOGOUT
 } from '../constants/User';
 
 
@@ -31,5 +32,17 @@ export function handleLogin() {
   },4);
 
     
+  }
+}
+
+
+
+export function handleLogout () {
+  return function(dispatch){
+    VK.Auth.logout
+    dispatch({
+      type: LOGOUT,
+      payload: ''
+    })
   }
 }
