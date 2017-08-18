@@ -56,7 +56,8 @@ export function handleCheckstatus() {
       type: CHECK_STATUS
     })
 
-    VK.Auth.getLoginStatus((r) => { // eslint-disable-line no-undef
+    
+    VK.Auth.getLoginStatus((r) => {   // eslint-disable-line no-undef 
       if (r.session) {
         let username = r.session.user.first_name;
 
@@ -65,7 +66,8 @@ export function handleCheckstatus() {
           payload: username
         })
     
-      }
+      };
     }) 
   }
 }
+
