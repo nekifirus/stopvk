@@ -6,6 +6,9 @@ import User from '../components/User';
 import '../stylesheets/App.css'
 
 class App extends Component {
+
+  
+
   render() {
     const { user } = this.props
     const { handleLogin } = this.props.userActions

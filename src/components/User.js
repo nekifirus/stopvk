@@ -5,7 +5,7 @@ export default class User extends Component {
   componentWillMount() {
     this.props.handleCheckstatus();
   }
-
+ 
   render() {
     const { name, error } = this.props
     let template

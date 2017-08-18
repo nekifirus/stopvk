@@ -7,14 +7,10 @@ import {
 } from '../constants/User';
 
 
-export function handleLogin() {
-  return function(dispatch) {
+const VKAuthLOGIN = function(dispatch) {
 
-    dispatch({
-      type: LOGIN_REQUEST
-    })
-
-  VK.Auth.login((r) => {   // eslint-disable-line no-undef
+  
+    VK.Auth.login((r) => {   // eslint-disable-line no-undef
     if (r.session) {
       let username = r.session.user.first_name;
 
@@ -22,6 +18,7 @@ export function handleLogin() {
         type: LOGIN_SUCCESS,
         payload: username
       })
+      
     
     } else {
       dispatch({
@@ -31,8 +28,17 @@ export function handleLogin() {
       })
     }
   },4);
+}
 
-    
+
+export function handleLogin() {
+  return function(dispatch) {
+
+    dispatch({
+      type: LOGIN_REQUEST
+    })
+
+    VKAuthLOGIN(dispatch);   
   }
 }
 
@@ -50,7 +56,7 @@ export function handleLogout() {
 }
 
 export function handleCheckstatus() {
-  return function(dispatch){
+  return function(dispatch) {
 
     dispatch({
       type: CHECK_STATUS
@@ -58,16 +64,11 @@ export function handleCheckstatus() {
 
     
     VK.Auth.getLoginStatus((r) => {   // eslint-disable-line no-undef 
-      if (r.session) {
-        let username = r.session.user.first_name;
-
-        dispatch({
-          type: LOGIN_SUCCESS,
-          payload: username
-        })
-    
+      if (r.status === 'connected') {
+        VKAuthLOGIN(dispatch);
       }
-    }) 
-  }
+    })
+  } 
+  
 }
 
