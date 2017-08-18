@@ -39,7 +39,7 @@ export function handleLogin() {
 
 export function handleLogout () {
   return function(dispatch){
-    VK.Auth.logout
+    VK.Auth.logout()  // eslint-disable-line no-undef
     dispatch({
       type: LOGOUT,
       payload: ''
