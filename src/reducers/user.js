@@ -1,25 +1,27 @@
 import {
-  LOGIN_SUCCESS,
   LOGIN_FAIL,
+  USER_INFO_SUCCESS,
   LOGOUT
 } from '../constants/User';
 
 const initialState = {
-  name: '',
+  info: '',
+  auth: false,
   error: ''
 }
 
 export default function user(state = initialState, action) {
 
   switch(action.type) {
-    case LOGIN_SUCCESS:
-      return { ...state, name: action.payload, error: ''}
-
+    
     case LOGIN_FAIL:
       return { ...state, error: action.payload.message }
 
+    case USER_INFO_SUCCESS:
+      return { ...state, info: action.payload, auth: true }
+
     case LOGOUT:
-      return { ...state, name: action.payload }
+      return { ...state, info: '', auth: false }
 
     default:
       return state

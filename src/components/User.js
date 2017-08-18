@@ -7,12 +7,17 @@ export default class User extends Component {
   }
  
   render() {
-    const { name, error } = this.props
+    const { error, info, auth } = this.props
     let template
   
 
-    if (name) {
-      template = <p>Привет, {name}! <button className="logoutbtn" onClick={this.props.handleLogout}>Выйти</button></p>
+    if (auth) {
+      template = <div>
+            <img src={info.photo_50}></img>
+
+            <p>Привет, {info.first_name} {info.last_name}!</p> 
+            <button className="logoutbtn" onClick={this.props.handleLogout}>Выйти</button>
+          </div>
     } else {
       template = <div>
           <p className="App-intro">

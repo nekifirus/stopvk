@@ -22,7 +22,8 @@ class App extends Component {
         </div>
 
         
-       <User  name={user.name} 
+       <User  info={user.info}
+              auth={user.auth} 
               handleLogin={handleLogin} 
               handleLogout={handleLogout} 
               handleCheckstatus={handleCheckstatus}

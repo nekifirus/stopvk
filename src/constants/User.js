@@ -9,6 +9,13 @@ export const LOGIN_FAIL = 'LOGIN_FAIL';
 
 export const CHECK_STATUS = 'CHECK_STATUS';
 
+
+//Get User Info
+
+export const USER_INFO_REQUEST = 'USER_INFO_REQUEST';
+export const USER_INFO_SUCCESS = 'USER_INFO_SUCCESS';
+export const USER_INFO_FAIL = 'USER_INFO_FAIL';
+
 /* logout */
 
 export const LOGOUT = 'LOGOUT';
