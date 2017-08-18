@@ -66,6 +66,6 @@ export function handleCheckstatus() {
         })
     
       }
-    }) // eslint-disable-line no-undef
+    }) 
   }
 }
