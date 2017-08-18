@@ -8,8 +8,8 @@ import '../stylesheets/App.css'
 class App extends Component {
   render() {
     const { user } = this.props
-    const { handleLogin } = this.props.userActions.handleLogin
-    const { handleLogout } = this.props.userActions.handleLogout
+    const { handleLogin } = this.props.userActions
+    const { handleLogout } = this.props.userActions
 
 
     return <div className="App">
