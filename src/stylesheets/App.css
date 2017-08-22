@@ -32,3 +32,15 @@
   background: rgb(53,84,125);
 }
 
+
+.logoutbtn {
+  background: #CCC;
+}
+
+.logoutbtn:hover {
+  background: #BBB;
+}
+
+.avatar {
+  border-radius: 5px;
+}

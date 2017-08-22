@@ -3,33 +3,36 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux';
 import * as userActions from '../actions/UserActions';
 import User from '../components/User';
+import Jumbotron from '../components/Jumbotron'
 import '../stylesheets/App.css'
 
 class App extends Component {
 
-  
+  componentWillMount() {
+    this.props.userActions.handleCheckstatus();
+  }
 
   render() {
     const { user } = this.props
     const { handleLogin } = this.props.userActions
     const { handleLogout } = this.props.userActions
-    const { handleCheckstatus } = this.props.userActions
-
+    
 
     return <div className="App">
         <div className="App-header">
           <h2>StopVK</h2>
         </div>
 
-        
-       <User  info={user.info}
+        {this.props.user.auth ? (
+          <User  info={user.info}
               auth={user.auth} 
               handleLogin={handleLogin} 
               handleLogout={handleLogout} 
-              handleCheckstatus={handleCheckstatus}
+              
               error={user.error} />
-
-      </div>
+          ) : <Jumbotron />
+        }
+    </div>
   }
 }
 

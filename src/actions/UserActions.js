@@ -16,7 +16,7 @@ function getUserInfo(dispatch, id) {
     type: USER_INFO_REQUEST
   })
 
-  VK.Api.call('users.get', {user_ids: id, fields: 'photo_50'}, ((r) => { // eslint-disable-line no-undef
+  VK.Api.call('users.get', {user_ids: id, fields: 'photo_100, counters'}, ((r) => { // eslint-disable-line no-undef
       if (r.response) {
         let user = r.response[0];
        
@@ -58,7 +58,7 @@ const VKAuthLOGIN = function(dispatch) {
         payload: new Error('Ошибка авторизации')
       })
     }
-  },4);
+  },8196);
 }
 
 
