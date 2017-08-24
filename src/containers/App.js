@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux';
 import * as userActions from '../actions/UserActions';
@@ -8,7 +9,7 @@ import '../stylesheets/App.css'
 
 class App extends Component {
 
-  componentWillMount() {
+ componentWillMount() {
     this.props.userActions.handleCheckstatus();
   }
 
@@ -21,6 +22,7 @@ class App extends Component {
     return <div className="App">
         <div className="App-header">
           <h2>StopVK</h2>
+          <Link to="/about">About</Link>
         </div>
 
         {this.props.user.auth ? (
