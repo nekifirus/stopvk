@@ -27,12 +27,12 @@ class App extends Component {
 
         {this.props.user.auth ? (
           <User  info={user.info}
-              auth={user.auth} 
-              handleLogin={handleLogin} 
+              
+              
               handleLogout={handleLogout} 
               
               error={user.error} />
-          ) : <Jumbotron />
+          ) : <Jumbotron handleLogin={handleLogin} />
         }
     </div>
   }
