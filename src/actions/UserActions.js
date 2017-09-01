@@ -16,41 +16,43 @@ function getUserInfo(dispatch, id) {
     type: USER_INFO_REQUEST
   })
 
-  VK.Api.call('users.get', {user_ids: id, fields: 'photo_100, counters'}, ((r) => { // eslint-disable-line no-undef
-      if (r.response) {
-        let user = r.response[0];
-       
-        
-        dispatch({
-          type: USER_INFO_SUCCESS,
-          payload: user
-        });
+  VK.Api.call('users.get', {  // eslint-disable-line no-undef
+    user_ids: id,
+    fields: 'photo_100, counters'
+  }, ((r) => {
+    if (r.response) {
+      let user = r.response[0];
 
-      } else {
-        dispatch({
-          type: USER_INFO_FAIL,
-          error: true,
-          payload: new Error('Ошибка получения информациии профиля')
-        })
-      }
+
+      dispatch({
+        type: USER_INFO_SUCCESS,
+        payload: user
+      });
+
+    } else {
+      dispatch({
+        type: USER_INFO_FAIL,
+        error: true,
+        payload: new Error('Ошибка получения информациии профиля')
+      })
+    }
   }))
 }
 
-
 const VKAuthLOGIN = function(dispatch) {
 
-  
-    VK.Auth.login((r) => {   // eslint-disable-line no-undef
+
+  VK.Auth.login((r) => { // eslint-disable-line no-undef
     if (r.session) {
       let id = r.session.mid;
       getUserInfo(dispatch, id)
 
       dispatch({
         type: LOGIN_SUCCESS,
-        
+
       })
-      
-    
+
+
     } else {
       dispatch({
         type: LOGIN_FAIL,
@@ -58,7 +60,7 @@ const VKAuthLOGIN = function(dispatch) {
         payload: new Error('Ошибка авторизации')
       })
     }
-  },8196);
+  }, 8196);
 }
 
 
@@ -69,7 +71,7 @@ export function handleLogin() {
       type: LOGIN_REQUEST
     })
 
-    VKAuthLOGIN(dispatch);   
+    VKAuthLOGIN(dispatch);
   }
 }
 
@@ -93,16 +95,15 @@ export function handleCheckstatus() {
       type: CHECK_STATUS
     })
 
-    
-    VK.Auth.getLoginStatus((r) => {   // eslint-disable-line no-undef 
+
+    VK.Auth.getLoginStatus((r) => {   // eslint-disable-line no-undef
       if (r.status === 'connected') {
         let id = r.session.mid;
         getUserInfo(dispatch, id)
         //VKAuthLOGIN(dispatch);
-        
+
       }
     })
-  } 
-  
-}
+  }
 
+}

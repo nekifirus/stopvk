@@ -10,7 +10,7 @@ function favsgetlinks()
 
 
 
-export function handleFavsindex () {
+export function handleFavsindex() {
   return finction(dispatch) {
     dispaych({
       type: FAVSINDEX_REQUEST
@@ -21,4 +21,3 @@ export function handleFavsindex () {
     })
   }
 }
-

@@ -5,6 +5,8 @@ import {
 } from '../constants/User';
 
 const initialState = {
+  id: '',
+  token: '',
   info: '',
   auth: false,
   error: ''
