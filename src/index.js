@@ -8,6 +8,7 @@ import createBrowserHistory from 'history/createBrowserHistory'
 
 import './index.css';
 import App from './containers/App';
+import Auth from './containers/Auth'
 
 import registerServiceWorker from './registerServiceWorker';
 
@@ -23,6 +24,7 @@ render(
       <Switch>
         <Route exact path="/" component={App} />
         <Route path="/about" component={About} />
+        <Route path="/auth" component={Auth} />
       </Switch>
     </Router>
   </Provider>,
