@@ -1,6 +1,8 @@
 import {
   AUTHLINK_SET,
-  AUTHLINK_PUSH
+  AUTHLINK_PUSH,
+  AUTHLINK_FAIL,
+  AUTHLINK_SUCCESS
 } from '../constants/Auth'
 
 const initialState = {
@@ -9,7 +11,8 @@ const initialState = {
   expires_in: '',
   isValid: false,
   error: false,
-  link: ''
+  link: '',
+  info: {}
 }
 
 
@@ -29,6 +32,19 @@ export default function auth(state = initialState, action) {
         access_token: action.auth.access_token,
         expires_in: action.auth.expires_in,
         error: ''
+      }
+    }
+
+    case AUTHLINK_FAIL: {
+      return { ...state,
+      error: action.payload
+      }
+    }
+
+    case AUTHLINK_SUCCESS: {
+      return { ...state,
+        info: action.payload
+
       }
     }
 

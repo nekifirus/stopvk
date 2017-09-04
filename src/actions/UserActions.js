@@ -10,34 +10,13 @@ import {
 } from '../constants/User';
 
 
-function getUserInfo(dispatch, id) {
-
-  dispatch({
-    type: USER_INFO_REQUEST
-  })
-
-  VK.Api.call('users.get', {  // eslint-disable-line no-undef
-    user_ids: id,
-    fields: 'photo_100, counters'
-  }, ((r) => {
-    if (r.response) {
-      let user = r.response[0];
 
 
-      dispatch({
-        type: USER_INFO_SUCCESS,
-        payload: user
-      });
 
-    } else {
-      dispatch({
-        type: USER_INFO_FAIL,
-        error: true,
-        payload: new Error('Ошибка получения информациии профиля')
-      })
-    }
-  }))
+function getUserInfo(dispatch, getState) {
+
 }
+
 
 const VKAuthLOGIN = function(dispatch) {
 

@@ -7,6 +7,7 @@ import User from '../components/User';
 import Jumbotron from '../components/Jumbotron'
 import '../stylesheets/App.css'
 
+
 class App extends Component {
 
   componentWillMount() {
@@ -15,8 +16,8 @@ class App extends Component {
 
   render() {
     const {user} = this.props
-    const {handleLogin} = this.props.userActions
-    const {handleLogout} = this.props.userActions
+    const {handleLogin, getUserInfo, handleLogout} = this.props.userActions
+
 
     return <div className="App">
       <div className="App-header">
@@ -24,7 +25,7 @@ class App extends Component {
         <Link to="/about">About</Link>
       </div>
 
-      {this.props.user.auth
+      {this.props.auth.user_id
         ? (<User info={user.info} handleLogout={handleLogout} error={user.error}/>)
         : <Jumbotron handleLogin={handleLogin}/>
       }

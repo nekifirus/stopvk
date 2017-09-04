@@ -1,9 +1,41 @@
-import {AUTHLINK_SET, AUTHLINK_PUSH} from '../constants/Auth'
+
+import {
+  AUTHLINK_SET,
+  AUTHLINK_PUSH,
+  AUTHLINK_FAIL,
+  AUTHLINK_SUCCESS
+} from '../constants/Auth'
+import jsonp from 'jsonp'
+
 
 var auth = {
   'user_id': '',
   'access_token': '',
   'expires_in': ''
+}
+
+export function getUserInfo(dispatch, getState) {
+
+  const state = getState()
+  const auth = state.auth
+
+
+  jsonp(`https://api.vk.com/method/users.get?user_ids=${auth.user_id}&fields=photo_100&v=5.68`,
+
+   function(err, data) {
+    if (err) {
+      dispatch({
+        type: AUTHLINK_FAIL,
+        payload: err
+      })
+    }
+    if (data) {
+      dispatch({
+        type: AUTHLINK_SUCCESS,
+        payload: data.response[0]
+      })
+    }
+  })
 }
 
 
@@ -55,5 +87,6 @@ export function pushLink(link) {
 
       dispatch({type: AUTHLINK_PUSH, auth})
 
+      getUserInfo(dispatch, getState)
     }
   }

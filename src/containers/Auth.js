@@ -9,7 +9,6 @@ import Authform from '../components/Auth'
 class Auth extends Component {
 
   render() {
-    const {user} = this.props
     const {auth} = this.props
     const {setLink, pushLink} = this.props.authActions
 
@@ -20,7 +19,7 @@ class Auth extends Component {
 }
 
 function mapStateToProps(state) {
-  return {user: state.user, auth: state.auth}
+  return {auth: state.auth}
 }
 
 function mapDispatchToProps(dispatch) {
