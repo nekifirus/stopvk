@@ -15,17 +15,15 @@ class App extends Component {
     const {auth} = this.props
 
 
-    return <div className="App">
-      <div className="App-header">
-        <h2>StopVK</h2>
-        <Link to="/about">About</Link>
-      </div>
+    return <div>
+            {auth.user_id
+              ? (<User info={auth.info}/>)
+              : <Auth/>
+            }
 
-      {auth.user_id
-        ? (<User info={auth.info} />)
-        : <Auth />
-      }
-    </div>
+            
+
+          </div>
   }
 }
 

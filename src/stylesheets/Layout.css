@@ -1,0 +1,43 @@
+.App {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: #cbffd6;
+  margin: -10px;
+  padding: -10px;
+}
+
+.Header {
+  display: flex;
+  flex-grow: 2;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  margin: 10px;
+  width: 95%;
+  background-color: rgb(63,94,135);
+  padding: 1px;
+  color: white;
+  border-radius: 5px;
+}
+.Logo {
+  flex-grow: 4;
+  margin: auto;
+
+  font-size: large;
+  font-style: italic;
+  font-weight: bolder;
+}
+.Nav {
+  flex-grow: 18;
+}
+.rightbut {
+  flex-grow: 1
+}
+
+.Main {
+  flex-grow: 20;
+  margin: auto;
+  padding: 10px;
+}

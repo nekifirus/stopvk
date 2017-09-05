@@ -20,7 +20,7 @@ export function getUserInfo(dispatch, getState) {
   const auth = state.auth
 
 
-  jsonp(`https://api.vk.com/method/users.get?user_ids=${auth.user_id}&fields=photo_100&v=5.68`,
+  jsonp(`https://api.vk.com/method/users.get?user_ids=${auth.user_id}&fields=photo_50&v=5.68`,
 
    function(err, data) {
     if (err) {
@@ -48,7 +48,7 @@ function checkLink(link) {
     c = ~link.indexOf('expires_in'),
     d = link.length === 172
 
-    
+
   return (a) && (b) && (c) && (d)
 }
 
