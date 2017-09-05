@@ -36,6 +36,8 @@ export function getUserInfo(dispatch, getState) {
       })
     }
   })
+
+
 }
 
 
@@ -46,7 +48,7 @@ function checkLink(link) {
     c = ~link.indexOf('expires_in'),
     d = link.length === 172
 
-    console.log(a, b, c, d)
+    
   return (a) && (b) && (c) && (d)
 }
 

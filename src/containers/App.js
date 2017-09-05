@@ -1,22 +1,18 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom'
-import {bindActionCreators} from 'redux'
+
 import {connect} from 'react-redux';
-import * as userActions from '../actions/UserActions';
+
 import User from '../components/User';
-import Jumbotron from '../components/Jumbotron'
+import Auth from './Auth'
 import '../stylesheets/App.css'
 
 
 class App extends Component {
 
-  componentWillMount() {
-    this.props.userActions.handleCheckstatus();
-  }
 
   render() {
-    const {user} = this.props
-    const {handleLogin, getUserInfo, handleLogout} = this.props.userActions
+    const {auth} = this.props
 
 
     return <div className="App">
@@ -25,22 +21,16 @@ class App extends Component {
         <Link to="/about">About</Link>
       </div>
 
-      {this.props.auth.user_id
-        ? (<User info={user.info} handleLogout={handleLogout} error={user.error}/>)
-        : <Jumbotron handleLogin={handleLogin}/>
+      {auth.user_id
+        ? (<User info={auth.info} />)
+        : <Auth />
       }
     </div>
   }
 }
 
 function mapStateToProps(state) {
-  return {user: state.user}
+  return {auth: state.auth}
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    userActions: bindActionCreators(userActions, dispatch)
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(App)
+export default connect(mapStateToProps)(App)
