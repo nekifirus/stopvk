@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
-import {Link} from 'react-router-dom'
+
 
 import {connect} from 'react-redux';
 
 import User from '../components/User';
+import Textdata from '../containers/Textdata'
 import Auth from './Auth'
 import '../stylesheets/App.css'
 
@@ -20,8 +21,8 @@ class App extends Component {
               ? (<User info={auth.info}/>)
               : <Auth/>
             }
+            <Textdata />
 
-            
 
           </div>
   }

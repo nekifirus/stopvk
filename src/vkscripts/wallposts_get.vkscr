@@ -1,0 +1,24 @@
+var postlist = [];
+var iter = 10;
+var owner_id = (Args.owner_id);
+var offset = parseInt(Args.offset);
+var count = 100;
+var posts;
+
+
+
+while (iter) {
+        posts = API.wall.get({
+          "owner_id": (owner_id),
+          "count": (count),
+          "offset": (offset),
+          "filter": "all"
+        });
+        postlist = postlist + posts.items;
+        iter = iter - 1;
+        offset = offset + count;
+        };
+
+
+
+return [offset, postlist];

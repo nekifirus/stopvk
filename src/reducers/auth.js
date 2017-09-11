@@ -6,13 +6,17 @@ import {
 } from '../constants/Auth'
 
 const initialState = {
-  user_id: '',
-  access_token: '',
-  expires_in: '',
+  user_id: '1518656',
+  access_token: '04e3bed827679e9412156404da1471471031c8357ea6fd3e64ee8439eae83dd15904b655ff8f86bdadc02',
+  expires_in: '0',
   isValid: false,
   error: false,
   link: '',
-  info: {}
+  info: {
+    first_name: 'Никита',
+    last_name: 'Мистюков',
+    photo_50: 'https://pp.userapi.com/c627127/v627127656/33d3d/yj6GBDhYK7k.jpg'
+  }
 }
 
 

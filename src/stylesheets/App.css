@@ -3,8 +3,6 @@
 
 }
 
-
-
 .App-header {
   background-color: rgb(63,94,135);
   border-radius: 5px;
@@ -43,4 +41,20 @@
 
 .avatar {
   border-radius: 5px;
+}
+
+
+.fetcher {
+  background-color: rgba(251, 247, 219, 0.9);
+  border-style: solid;
+  border-radius: 10px;
+  border-color: rgb(223, 199, 36);
+  padding: 10px;
+  margin: auto;
+}
+
+.fetch-message {
+  color: rgba(119, 91, 42);
+  font-size: large;
+  font-style: oblique;
 }

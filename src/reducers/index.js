@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
-import user from './user'
 import auth from './auth'
+import wall from './wall'
 
 export default combineReducers({
-  user,
-  auth
+  auth,
+  wall
 })

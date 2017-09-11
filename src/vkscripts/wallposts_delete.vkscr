@@ -1,0 +1,17 @@
+var count = (Args.count);
+var posts = (Args.posts).split(",");
+
+var id;
+
+while (count) {
+    id = parseInt(posts.pop());
+    API.wall.delete({
+
+        "post_id": (id)
+        });
+    count = count -1;
+
+};
+
+
+return [posts];
