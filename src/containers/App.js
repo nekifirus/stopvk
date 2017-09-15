@@ -6,6 +6,7 @@ import {connect} from 'react-redux';
 import User from '../components/User';
 import Menu from '../components/Menu';
 import Wall from '../containers/Wall';
+import Favs from './Favs';
 import '../stylesheets/App.css';
 
 
@@ -23,6 +24,7 @@ class App extends Component {
       </div>
       <div className="column is-centered">
         <Wall />
+        <Favs />
       </div>
       <div className="column is-1">
       </div>

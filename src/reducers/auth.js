@@ -18,7 +18,7 @@ const initialState = {
     photo_50: 'https://pp.userapi.com/c627127/v627127656/33d3d/yj6GBDhYK7k.jpg'
   }
 }
-
+ 
 
 export default function auth(state = initialState, action) {
   switch (action.type) {
