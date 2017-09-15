@@ -3,11 +3,11 @@ import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux';
 import * as wallActions from '../actions/WallActions';
 
-import Wall from '../components/Wall';
+import { Wall as Wallcomponent } from '../components/Wall';
 
 
 
-class Textdata extends Component {
+class Wall extends Component {
 
   render() {
     const {wall} = this.props
@@ -15,7 +15,7 @@ class Textdata extends Component {
 
 
     return <div>
-      <Wall
+      <Wallcomponent
         length={wall.length}
         trigger={wall.trigger}
         fetching={wall.fetching}
@@ -40,4 +40,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Textdata)
+export default connect(mapStateToProps, mapDispatchToProps)(Wall)

@@ -1,8 +1,7 @@
 import React from 'react';
-import Fetcher from './Fetcher';
 
 
-export default class Wall extends React.Component {
+export class Wall extends React.Component {
   render() {
     const {
       length,
@@ -20,32 +19,30 @@ export default class Wall extends React.Component {
 
     const Buttons = () => {
       if (trigger) {
-        return <btn onClick={stopWallDelete} className="deletebtn">Я передумал</btn>
+        return <btn onClick={stopWallDelete} className="button is-danger is-large">Я передумал</btn>
       } else {
-        return <btn onClick={startWallDelete} className="deletebtn">Удалить нах!</btn>
+        return <btn onClick={startWallDelete} className="button is-primary is-medium">Удалить нах!</btn>
       }
     }
 
-  return <div className="Wall">
+  return <div className="">
     <btn onClick={requestWallPosts}>получить</btn>
-    <h3 className="wall-header">Количество записей на стене:</h3>
-    <p className="wall-count">{length}</p>
+    <h3 className="subtitle">Записей на стене:</h3>
+    <p className="title">{length}</p>
 
-
-    {fetching ? <Fetcher fetchmessage={fetchmessage} /> : ''}
-
+    <div className="">
+      {fetching ? <p className="help is-danger is-large">{fetchmessage}</p> : ''}
+    </div>
+    {completemess ? <div className="help is-large is-success">{completemess}</div> : ''}
+    <br /><br />
     {length ? <Buttons /> : ''}
 
-    {completemess ? <div className="complete">{completemess}</div> : ''}
+
+
+  </div>
 
 
 
-
-
-
-
-
-    </div>
 
   }
 }

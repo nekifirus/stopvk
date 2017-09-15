@@ -6,14 +6,18 @@ import { Router, Route } from 'react-router-dom'
 
 import createBrowserHistory from 'history/createBrowserHistory'
 
-import './index.css';
+
+import '../node_modules/bulma/css/bulma.css'
+
 import App from './containers/App';
+
 import Auth from './containers/Auth'
 import Layout from './components/Layout'
 
 import registerServiceWorker from './registerServiceWorker';
 
-import About from './components/About.js'
+import About from './components/About.js';
+import Jumbotron from './components/Jumbotron';
 
 
 const store = configureStore();
@@ -26,6 +30,7 @@ render(
           <Route exact path ="/" component={App} />
           <Route path="/about" component={About} />
           <Route path="/auth" component={Auth} />
+          <Route path="/intro" component={Jumbotron} />
       </Layout>
     </Router>
   </Provider>,
