@@ -13,6 +13,7 @@ import {
 } from '../constants/Wall';
 
 import jsonp from 'jsonp';
+import arrPrepare from '../Utils/arrPrepare';
 
 export function stopWallDelete() {
   return { type: WALLDELL_STOP };
@@ -41,19 +42,6 @@ function deleteWallPosts (access_token, posts, getState, dispatch) {
   //функция подготовки постов для удаления
   //берет 3 последних записи на стене - возвращает строку id записей
   //ВК массивы не берет аргументами, только строки(
-  function postsPrepare (posts, count) {
-    let arr = [];
-    //берем -count- единиц с конца списка постов
-    posts = posts.splice(-count, count);
-    //забираем из вырезанного массива постов только id - больше для удаления не нужно
-    for (var key of posts) {
-      arr.push(key.id);
-    };
-    //превращаем массив id для удаления в строку. ВК не берет массивы
-    arr = arr.join();
-    //возвращаем полученную строку
-    return arr;
-  };
 
   //реализация кнопки Стоп. Если триггер false то возврат
   if (!trigger) return;
@@ -62,7 +50,7 @@ function deleteWallPosts (access_token, posts, getState, dispatch) {
 
 
   //берем строчку с id постов
-  postsToDelete = postsPrepare(posts, count);
+  postsToDelete = arrPrepare(posts, count);
   //делаем запрос
   jsonp(`https://api.vk.com/method/execute.wallposts_delete?access_token=${access_token}&count=${count}&posts=${postsToDelete}&v=5.68`,
    function(err, data) {

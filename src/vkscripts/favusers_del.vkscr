@@ -1,0 +1,16 @@
+var count = (Args.count);
+var users = (Args.users).split(",");
+
+var user_id;
+
+while (count) {
+    user_id = parseInt(users.pop());
+    API.fave.removeUser({
+        "user_id": (user_id)
+        });
+    count = count -1;
+
+};
+
+
+return "Success";

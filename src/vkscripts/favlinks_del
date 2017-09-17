@@ -4,7 +4,7 @@ var links = (Args.links).split(",");
 var id;
 
 while (count) {
-    id = parseInt(links.pop());
+    id = (links.pop());
     API.fave.removeLink({
         "link_id": (id)
         });

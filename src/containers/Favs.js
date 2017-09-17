@@ -3,26 +3,44 @@ import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux';
 import * as favsActions from '../actions/FavsActions';
 
-import { FavLinks } from '../components/Favs';
+import { FavView } from '../components/Favs';
 
 
 class Favs extends Component {
 
   render() {
-    const { favs } = this.props
+    const
+      { favs } = this.props,
+      { favegetLinks,
+        favedelLinks,
+        favegetUsers,
+        favedelUsers
+      } = this.props.favsActions;
 
 
 
     return <div>
-      <FavLinks
+      <FavView
+        title="Ссылок в закладках:"
         length={favs.linklength}
         fetching={favs.fetching}
         fetchmessage={favs.fetchmessage}
         completemess={favs.completemess}
         error = {favs.error}
-        favsActions={this.props.favsActions}
+        get = {favegetLinks}
+        del = {favedelLinks}
       />
-
+    
+      <FavView
+        title="Пользователей в закладках:"
+        length={favs.userlength}
+        fetching={favs.fetching}
+        fetchmessage={favs.fetchmessage}
+        completemess={favs.completemess}
+        error = {favs.error}
+        get = {favegetUsers}
+        del = {favedelUsers}
+      />
 
       </div>
   }

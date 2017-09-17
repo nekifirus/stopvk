@@ -1,26 +1,22 @@
 import React from 'react';
 
 
-export class FavLinks extends React.Component {
+export class FavView extends React.Component {
   render() {
     const {
+      title,
       length,
       fetching,
       fetchmessage,
       error,
-      completemess
+      completemess,
+      get,
+      del
     } = this.props;
 
-    const {
-      favegetLinks,
-      favedelLinks,
-    } = this.props.favsActions;
-
-
-
   return <div className="">
-    <btn onClick={favegetLinks}>получить</btn>
-    <h3 className="subtitle">Ссылок в закладках:</h3>
+    <btn onClick={get}>получить</btn>
+    <h3 className="subtitle">{title}</h3>
     <p className="title">{length}</p>
 
 
@@ -28,7 +24,7 @@ export class FavLinks extends React.Component {
     {error ? <p className="help is-danger is-large">{error}</p> : ''}
     {completemess ? <div className="help is-large is-success">{completemess}</div> : ''}
     <br /><br />
-    {length ? <btn onClick={favedelLinks} className="button is-primary is-medium">Удалить нах!</btn> : ''}
+    {length ? <btn onClick={del} className="button is-primary is-medium">Удалить нах!</btn> : ''}
 
 
 
