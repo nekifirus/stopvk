@@ -1,0 +1,19 @@
+var type = (Args.type);
+var items = (Args.items).split(",");
+
+var item_id;
+var owner_id;
+
+while (items.length) {
+    owner_id = parseInt(items.pop());
+    item_id = parseInt(items.pop());
+    API.likes.delete({
+        "item_id": (item_id),
+        "owner_id": (owner_id),
+        "type": (type)
+        });
+
+};
+
+
+return "Success";

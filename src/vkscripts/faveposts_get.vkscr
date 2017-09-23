@@ -1,0 +1,21 @@
+var postlist = [];
+var iter = 10;
+var offset = parseInt(Args.offset);
+var count = parseInt(Args.count);
+var posts;
+
+
+
+while (iter) {
+        posts = API.fave.getPosts({
+            "count": (count),
+            "offset": (offset),
+            });
+        postlist = postlist + posts.items;
+        iter = iter - 1;
+        offset = offset + count;
+        };
+
+
+
+return [offset, postlist];

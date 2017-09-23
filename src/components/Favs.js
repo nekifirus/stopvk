@@ -24,7 +24,7 @@ export class FavView extends React.Component {
     {error ? <p className="help is-danger is-large">{error}</p> : ''}
     {completemess ? <div className="help is-large is-success">{completemess}</div> : ''}
     <br /><br />
-    {length ? <btn onClick={del} className="button is-primary is-medium">Удалить нах!</btn> : ''}
+    {(length && !fetching) ? <btn onClick={del} className="button is-primary is-medium">Удалить нах!</btn> : ''}
 
 
 

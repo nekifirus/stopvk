@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import * as favsActions from '../actions/FavsActions';
 
 import { FavView } from '../components/Favs';
+import Captcha from '../components/Captcha';
 
 
 class Favs extends Component {
@@ -14,7 +15,13 @@ class Favs extends Component {
       { favegetLinks,
         favedelLinks,
         favegetUsers,
-        favedelUsers
+        favedelUsers,
+        favegetVideos,
+        favedelVideos,
+        favegetPosts,
+        favedelPosts,
+        setCaptcha,
+        submitCaptcha
       } = this.props.favsActions;
 
 
@@ -30,7 +37,7 @@ class Favs extends Component {
         get = {favegetLinks}
         del = {favedelLinks}
       />
-    
+
       <FavView
         title="Пользователей в закладках:"
         length={favs.userlength}
@@ -41,6 +48,41 @@ class Favs extends Component {
         get = {favegetUsers}
         del = {favedelUsers}
       />
+
+      <FavView
+        title="Видеозаписей в закладках:"
+        length={favs.videolength}
+        fetching={favs.fetching}
+        fetchmessage={favs.fetchmessage}
+        completemess={favs.completemess}
+        error = {favs.error}
+        get = {favegetVideos}
+        del = {favedelVideos}
+      />
+
+
+      <FavView
+        title="Постов в закладках:"
+        length={favs.postslength}
+        fetching={favs.fetching}
+        fetchmessage={favs.fetchmessage}
+        completemess={favs.completemess}
+        error = {favs.error}
+        get = {favegetPosts}
+        del = {favedelPosts}
+      />
+
+      {favs.captcha_img
+        ?
+        <Captcha
+          captcha_img={favs.captcha_img}
+          captcha_key={favs.captcha_key}
+          setCaptcha={setCaptcha}
+          submitCaptcha={submitCaptcha}
+
+        />
+        : ''
+      }
 
       </div>
   }
