@@ -19,6 +19,9 @@ import registerServiceWorker from './registerServiceWorker';
 import About from './components/About.js';
 import Jumbotron from './components/Jumbotron';
 
+import Wall from './containers/Wall';
+import Favs from './containers/Favs';
+
 
 const store = configureStore();
 const history= createBrowserHistory();
@@ -28,6 +31,10 @@ render(
     <Router history={history}>
       <Layout>
           <Route exact path ="/" component={App} />
+          <App>
+            <Route path="/wall" component={Wall} />
+            <Route path="/favs" component={Favs} />
+          </App>
           <Route path="/about" component={About} />
           <Route path="/auth" component={Auth} />
           <Route path="/intro" component={Jumbotron} />

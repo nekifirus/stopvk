@@ -15,7 +15,7 @@ export default class Captcha extends React.Component {
   };
 
   render() {
-    const { captcha_img, captcha_key } = this.props;
+    const { captcha_img, captcha_key, cancelCaptcha } = this.props;
 
 
 
@@ -39,7 +39,7 @@ export default class Captcha extends React.Component {
         <p><button className="button is-primary" onClick={this.submitCaptcha.bind(this)}>Вроде так</button></p>
 
       </div>
-      <button className="modal-close is-large" aria-label="close"></button>
+      <button className="modal-close is-large" aria-label="close" onClick={cancelCaptcha}></button>
     </div>
   }
 }

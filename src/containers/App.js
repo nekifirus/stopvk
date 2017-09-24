@@ -2,11 +2,11 @@ import React, {Component} from 'react';
 
 
 import {connect} from 'react-redux';
+import { withRouter } from 'react-router-dom'
 
 import User from '../components/User';
 import Menu from '../components/Menu';
-import Wall from '../containers/Wall';
-import Favs from './Favs';
+
 import '../stylesheets/App.css';
 
 
@@ -23,8 +23,7 @@ class App extends Component {
         <Menu />
       </div>
       <div className="column is-centered">
-        <Wall />
-        <Favs />
+        {this.props.children}
       </div>
       <div className="column is-1">
       </div>
@@ -36,4 +35,4 @@ function mapStateToProps(state) {
   return {auth: state.auth}
 }
 
-export default connect(mapStateToProps)(App)
+export default withRouter(connect(mapStateToProps)(App));

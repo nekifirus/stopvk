@@ -7,6 +7,7 @@ import {
   FAVLINKSDEL_REQUEST,
   FAVLINKSDEL_SUCCESS,
   FAVLINKSDEL_FAIL,
+
   //закладки пользователи
   FAVUSER_REQUEST,
   FAVUSER_SUCCESS,
@@ -15,6 +16,7 @@ import {
   FAVUSERDEL_REQUEST,
   FAVUSERDEL_SUCCESS,
   FAVUSERDEL_FAIL,
+
   //fav video
   FAVVIDEO_REQUEST,
   FAVVIDEO_SUCCESS,
@@ -33,78 +35,49 @@ import {
   FAVPOSTSDEL_SUCCESS,
   FAVPOSTSDEL_FAIL,
 
+  //marketitems
+  FAVMARKIT_REQUEST,
+  FAVMARKIT_SUCCESS,
+  FAVMARKIT_FAIL,
+
+  FAVMARKITDEL_REQUEST,
+  FAVMARKITDEL_SUCCESS,
+  FAVMARKITDEL_FAIL,
+
+  //captcha
   CAPTCHA_NEEDED,
   CAPTCHA_SET,
+  CAPTCHA_CANCEL,
   CAPTCHA_SUBMITED
 
 } from '../constants/Favs';
-import jsonp from 'jsonp';
+
+import jsonpRequest from '../Utils/jsonpRequest';
 import linkCreator from '../Utils/linkCreator';
 import arrPrepare from '../Utils/arrPrepare';
-
-
-function jsonpRequest(requestLink) {
-  return new Promise(function(resolve, reject) {
-    jsonp(requestLink, function(err, data) {
-      if (err) reject (err);
-      if (data) resolve (data);
-    })
-  });
-};
-
-function likesPrepare(arr, count) {
- var returnstring = [];
- arr = arr.splice(-count, count);
-
- for (var key of arr) {
-     returnstring.push(key.id);
-     returnstring.push(key.owner_id);
-  };
-
- returnstring = returnstring.join();
- return returnstring;
-};
-
-
-export function setCaptcha(captcha_key) {
-  return { type: CAPTCHA_SET, payload: captcha_key };
-};
-
-export function submitCaptcha() {
-  return function(dispatch, getState) {
-    const state = getState();
-    var params = state.favs.captcha_params;
-
-    params.captcha_sid = state.favs.captcha_sid;
-    params.captcha_key = state.favs.captcha_key;
+import likesPrepare from '../Utils/likesPrepare';
 
 
 
-    console.log(params)
 
-    dispatch({
-      type: CAPTCHA_SUBMITED
-    });
-
-    unLike(params, dispatch);
-
-  }
-}
 
 export function favegetLinks() {
   return function(dispatch, getState) {
     const
       state = getState(),
-      access_token = state.auth.access_token,
-      methodname = "fave.getLinks",
-      count = 50,
-      types = {
-        request: FAVLINKS_REQUEST,
-        success: FAVLINKS_SUCCESS,
-        fail: FAVLINKS_FAIL
+      params = {
+        access_token: state.auth.access_token,
+        methodname: "fave.getLinks",
+        count: 50,
+        actiontypes: {
+          request: FAVLINKS_REQUEST,
+          success: FAVLINKS_SUCCESS,
+          fail: FAVLINKS_FAIL
+        }
       };
 
-    getFave(methodname, count, access_token, types, dispatch);
+
+    getFave(params, dispatch);
   }
 }
 
@@ -134,16 +107,18 @@ export function favegetUsers() {
   return function(dispatch, getState){
     const
       state = getState(),
-      access_token = state.auth.access_token,
-      methodname = "fave.getUsers",
-      count = 50,
-      types = {
-        request: FAVUSER_REQUEST,
-        success: FAVUSER_SUCCESS,
-        fail: FAVUSER_FAIL
+      params = {
+        access_token: state.auth.access_token,
+        methodname: "fave.getUsers",
+        count: 50,
+        actiontypes: {
+          request: FAVUSER_REQUEST,
+          success: FAVUSER_SUCCESS,
+          fail: FAVUSER_FAIL
+        }
       };
 
-    getFave(methodname, count, access_token, types, dispatch);
+    getFave(params, dispatch);
   }
 }
 
@@ -176,18 +151,20 @@ export function favegetVideos() {
   return function(dispatch, getState) {
     const
       state = getState(),
-      access_token = state.auth.access_token,
-      methodname = "fave.getVideos",
-      count = 50,
-      types = {
-        request: FAVVIDEO_REQUEST,
-        success: FAVVIDEO_SUCCESS,
-        fail: FAVVIDEO_FAIL
+      params = {
+        access_token: state.auth.access_token,
+        methodname: "fave.getVideos",
+        count: 50,
+        actiontypes: {
+          request: FAVVIDEO_REQUEST,
+          success: FAVVIDEO_SUCCESS,
+          fail: FAVVIDEO_FAIL
+        }
       };
 
-    getFave(methodname, count, access_token, types, dispatch);
-  }
-}
+    getFave(params, dispatch);
+  };
+};
 
 export function favedelVideos() {
   return function(dispatch, getState) {
@@ -215,20 +192,24 @@ export function favegetPosts() {
   return function(dispatch, getState) {
     const
       state = getState(),
-      access_token = state.auth.access_token,
-      methodname = "execute.faveposts_get",
-      count = 30,
-      types = {
-        request: FAVPOSTS_REQUEST,
-        success: FAVPOSTS_SUCCESS,
-        fail: FAVPOSTS_FAIL
-      };
+      params = {
+        access_token: state.auth.access_token,
+        methodname: "execute.faveposts_get",
+        count: 30,
+        actiontypes: {
+          request: FAVPOSTS_REQUEST,
+          success: FAVPOSTS_SUCCESS,
+          fail: FAVPOSTS_FAIL
+        }
+      }
 
-    getPosts(methodname, count, access_token, types, dispatch);
 
-    function getPosts(methodname, count, access_token, types, dispatch) {
+    getPosts(params, dispatch);
+
+    function getPosts(params, dispatch) {
       const
-        { request, success, fail } = types;
+        { access_token, methodname, count, actiontypes } = params,
+        { request, success, fail } = actiontypes;
 
       var
         offset = 0,
@@ -242,43 +223,38 @@ export function favegetPosts() {
       faveRequestCycle(offset);
 
       function faveRequestCycle(offset) {
-        jsonp(linkCreator(methodname,
+
+        jsonpRequest(linkCreator(methodname,
                           access_token,
-                          { count: count, offset: offset }),
-              function(err, data) {
-                if (err) {
-                  dispatch({
-                    type: fail,
-                    payload: err
-                  });
-                };
-                if (data) {
-                  console.log(data)
-
-                  targetarr = targetarr.concat(data.response.items);
-                  offset = data.response.offset;
-                  console.log(data.response.count, offset, targetarr)
-                  //странно работает. отдает не все. разобраться
-                  if (!data.response.items.length) return dispatch({
-                      type: success,
-                      payload: targetarr
-                    });
-                  dispatch({
-                    type: request,
-                    payload: targetarr.length
-                  });
-                  setTimeout(function() {
-                    faveRequestCycle(offset)
-                  }, 333);
-                }
-              })
-      }
-
-    }
-
-
-  }
-}
+                          { count: count, offset: offset }))
+          .then(function(response) {
+            targetarr = targetarr.concat(response.items);
+            offset = response.offset;
+            console.log(response.count, offset, targetarr)
+            //странно работает. отдает не все. разобраться
+            if (!response.items.length) return dispatch({
+                type: success,
+                payload: targetarr
+              });
+            dispatch({
+              type: request,
+              payload: targetarr.length
+            });
+            setTimeout(function() {
+              faveRequestCycle(offset)
+            }, 333);
+          })
+          .catch(function(err){
+            err = JSON.stringify(err);
+            return dispatch({
+              type: fail,
+              payload: err
+            });
+          });
+      };
+    };
+  };
+};
 
 
 export function favedelPosts() {
@@ -329,12 +305,8 @@ function unLike(params, dispatch) {
   }
 
   jsonpRequest(requestLink)
-    .then(function(data) {
-      console.log(data)
-      if (data.response) return data.response;
-      if (data.error) throw data.error;
-    })
     .then(function(response){
+      console.log(response)
       targetarr.splice(-count, count);
       params.targetarr = targetarr;
       setTimeout(function() {
@@ -349,10 +321,11 @@ function unLike(params, dispatch) {
           sid: err.captcha_sid,
           params: params
         });
-      }
+      };
+      err = JSON.stringify(err);
       return dispatch({
         type: fail,
-        payload: err.toString
+        payload: err
       });
     });
 };
@@ -362,92 +335,155 @@ function unLike(params, dispatch) {
 
 
 
-function getFave(methodname, count, access_token, types, dispatch) {
+function getFave(params, dispatch) {
   const
-    { request, success, fail } = types;
+    { methodname, count, access_token, actiontypes } = params,
+    { request, success, fail } = actiontypes;
 
   var
     offset = 0,
     targetarr = [];
 
-  dispatch({
-    type: request,
-    payload: targetarr.length
-  })
-
   faveRequestCycle(offset);
 
   function faveRequestCycle(offset) {
-    jsonp(linkCreator(methodname,
-                      access_token,
-                      { count: count, offset: offset }),
-          function(err, data) {
-            if (err) {
-              dispatch({
-                type: fail,
-                payload: err
-              });
-            };
-            if (data) {
-              console.log(data)
 
-              targetarr = targetarr.concat(data.response.items);
-              offset = offset + count;
-              if (offset > data.response.count) return dispatch({
-                  type: success,
-                  payload: targetarr
-                });
-              dispatch({
-                type: request,
-                payload: targetarr.length
-              });
-              setTimeout(function() {
-                faveRequestCycle(offset)
-              }, 333);
-            }
-          })
-  }
+    dispatch({
+      type: request,
+      payload: targetarr.length
+    });
 
-}
-
-
-
-function delFave(methodname, access_token, targetarr, types, dispatch) {
-  const
-    { request, success, fail } = types,
-    count = 20;
-  dispatch({
-    type: request,
-    payload: targetarr.length
-  })
-
-  delRequest()
-
-  function delRequest() {
-    if (!targetarr.length) return dispatch({ type: success });
-
-    var favstoDelete = arrPrepare(targetarr, count);
-
-    jsonp(
-      linkCreator(methodname, access_token,
-                  { count: count, favs: favstoDelete }),
-      function(err, data) {
-        if (err) return dispatch({
+    var requestLink = linkCreator(methodname, access_token,
+                                  { count: count, offset: offset });
+    jsonpRequest(requestLink)
+      .then(function(response){
+        console.log(response)
+        targetarr = targetarr.concat(response.items);
+        offset = offset + response.items.length;
+        if (offset >= response.count) return dispatch({
+            type: success,
+            payload: targetarr
+          });
+        setTimeout(function() {
+          faveRequestCycle(offset)
+        }, 333);
+      })
+      .catch(function(err){
+        err = JSON.stringify(err);
+        return dispatch({
           type: fail,
           payload: err
         });
-        if (data) {
+      });
+  };
+};
 
-          dispatch({
-            type: request,
-            payload: targetarr.length
-          });
-          setTimeout(function() {
-           delRequest();
-          }, 333);
+
+
+function delFave(params, dispatch) {
+  const
+    { methodname, access_token, targetarr, actiontypes } = params,
+    { request, success, fail } = actiontypes,
+    count = 20;
+
+  if (!targetarr.length) return dispatch({ type: success });
+
+  dispatch({
+    type: request,
+    payload: targetarr.length
+  });
+
+  var favstoDelete = arrPrepare(targetarr, count),
+      requestLink = linkCreator(methodname, access_token,
+                                { count: count, favs: favstoDelete });
+
+  jsonpRequest(requestLink)
+    .then(function(response){
+      dispatch({
+        type: request,
+        payload: targetarr.length
+      });
+      targetarr.splice(-count, count);
+      params.targetarr = targetarr;
+      setTimeout(function() {
+       delFave(params, dispatch);
+      }, 333);
+    })
+    .catch(function(err){
+      err = JSON.stringify(err);
+      return dispatch({
+        type: fail,
+        payload: err
+      });
+    });
+};
+
+
+
+
+export function favegetMarkit(){
+  return function(dispatch, getState){
+    const
+      state = getState(),
+      params = {
+        access_token: state.auth.access_token,
+        methodname: "fave.getMarketItems",
+        count: 50,
+        actiontypes: {
+          request: FAVMARKIT_REQUEST,
+          success: FAVMARKIT_SUCCESS,
+          fail: FAVMARKIT_FAIL
         }
-      }
-    );
-  }
+      };
 
-}
+    getFave(params, dispatch);
+  };
+};
+
+export function favedelMarkit() {
+  return function(dispatch, getState) {
+    const
+      state = getState(),
+      params = {
+        access_token: state.auth.access_token,
+        targetarr: state.favs.markitarr,
+        targettype: "market",
+
+        actiontypes: {
+          request: FAVMARKITDEL_REQUEST,
+          success: FAVMARKITDEL_SUCCESS,
+          fail: FAVMARKITDEL_FAIL
+        }
+      };
+
+    unLike(params, dispatch);
+  };
+};
+
+
+
+
+export function setCaptcha(captcha_key) {
+  return { type: CAPTCHA_SET, payload: captcha_key };
+};
+
+export function cancelCaptcha(){
+  return { type: CAPTCHA_CANCEL };
+};
+
+export function submitCaptcha() {
+  return function(dispatch, getState) {
+    const state = getState();
+    var params = state.favs.captcha_params;
+
+    params.captcha_sid = state.favs.captcha_sid;
+    params.captcha_key = state.favs.captcha_key;
+
+    dispatch({
+      type: CAPTCHA_SUBMITED
+    });
+
+    unLike(params, dispatch);
+
+  };
+};

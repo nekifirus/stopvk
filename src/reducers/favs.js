@@ -34,8 +34,18 @@ import {
   FAVPOSTSDEL_SUCCESS,
   FAVPOSTSDEL_FAIL,
 
+  //fave markit
+  FAVMARKIT_REQUEST,
+  FAVMARKIT_SUCCESS,
+  FAVMARKIT_FAIL,
+
+  FAVMARKITDEL_REQUEST,
+  FAVMARKITDEL_SUCCESS,
+  FAVMARKITDEL_FAIL,
+
   CAPTCHA_NEEDED,
   CAPTCHA_SET,
+  CAPTCHA_CANCEL,
   CAPTCHA_SUBMITED
 
 } from '../constants/Favs';
@@ -52,6 +62,9 @@ const initialState = {
 
   postsarr: [],
   postslength: '',
+
+  markitarr: '',
+  markitlength: '',
 
   fetching: false,
   fetchmessage: '',
@@ -96,6 +109,7 @@ export default function favs(state = initialState, action) {
     case FAVLINKSDEL_SUCCESS:
       return {...state,
               fetching: false,
+              linklength: 0,
               completemess: "В закладках больше нет ссылок"
       };
 
@@ -130,6 +144,7 @@ export default function favs(state = initialState, action) {
     case FAVUSERDEL_SUCCESS:
       return {...state,
               fetching: false,
+              userlength: 0,
               completemess: "В закладках больше нет пользователей"
       };
 
@@ -166,6 +181,7 @@ export default function favs(state = initialState, action) {
     case FAVVIDEODEL_SUCCESS:
       return {...state,
               fetching: false,
+              videolength: 0,
               completemess: "В закладках больше нет видеозаписей"
       };
 
@@ -202,6 +218,7 @@ export default function favs(state = initialState, action) {
       case FAVPOSTSDEL_SUCCESS:
         return {...state,
                 fetching: false,
+                postslength: 0,
                 completemess: "В закладках больше нет постов"
         };
 
@@ -210,6 +227,44 @@ export default function favs(state = initialState, action) {
 
 
 
+
+      //marketitem
+      case FAVMARKIT_REQUEST:
+        return {...state,
+                markitlength: action.payload,
+                fetching: true,
+                fetchmessage: "Получаю список товаров в закладках",
+                completemess: '',
+                error: ''
+        };
+
+      case FAVMARKIT_SUCCESS:
+        return {...state, fetching: false,
+                markitarr: action.payload,
+                markitlength: action.payload.length };
+
+      case FAVMARKIT_FAIL:
+        return {...state, error: action.payload, fetching: false };
+
+      case FAVMARKITDEL_REQUEST:
+        return {...state,
+                markitlength: action.payload,
+                fetching: true,
+                fetchmessage: "Удаляю товары из закладок"
+      };
+
+      case FAVMARKITDEL_SUCCESS:
+        return {...state,
+                fetching: false,
+                markitlength: 0,
+                completemess: "В закладках больше нет товаров"
+        };
+
+      case FAVMARKITDEL_FAIL:
+        return {...state, fetching: false, error: action.payload};
+
+
+      //captcha
       case CAPTCHA_NEEDED:
         return {...state,
                 captcha_img: action.img,
@@ -220,10 +275,20 @@ export default function favs(state = initialState, action) {
       case CAPTCHA_SET:
         return {...state, captcha_key: action.payload };
 
+      case CAPTCHA_CANCEL:
+        return {...state,
+                captcha_key: '',
+                captcha_img: '',
+                captcha_sid: '',
+                captcha_params: '',
+                fetching: false
+        };
+
       case CAPTCHA_SUBMITED:
         return {...state,
                 captcha_img: '',
                 captcha_sid: '',
+                captcha_key: '',
                 captcha_params: ''
         };
 

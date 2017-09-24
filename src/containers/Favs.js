@@ -20,7 +20,10 @@ class Favs extends Component {
         favedelVideos,
         favegetPosts,
         favedelPosts,
+        favegetMarkit,
+        favedelMarkit,
         setCaptcha,
+        cancelCaptcha,
         submitCaptcha
       } = this.props.favsActions;
 
@@ -72,12 +75,26 @@ class Favs extends Component {
         del = {favedelPosts}
       />
 
+      <FavView
+        title="Товаров в закладках:"
+        length={favs.markitlength}
+        fetching={favs.fetching}
+        fetchmessage={favs.fetchmessage}
+        completemess={favs.completemess}
+        error = {favs.error}
+        get = {favegetMarkit}
+        del = {favedelMarkit}
+      />
+
+
+
       {favs.captcha_img
         ?
         <Captcha
           captcha_img={favs.captcha_img}
           captcha_key={favs.captcha_key}
           setCaptcha={setCaptcha}
+          cancelCaptcha={cancelCaptcha}
           submitCaptcha={submitCaptcha}
 
         />
