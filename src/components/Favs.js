@@ -26,7 +26,7 @@ export class FavView extends React.Component {
     <br /><br />
     {(length && !fetching) ? <btn onClick={del} className="button is-primary is-medium">Удалить нах!</btn> : ''}
 
-
+    
 
   </div>
 

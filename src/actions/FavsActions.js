@@ -44,6 +44,15 @@ import {
   FAVMARKITDEL_SUCCESS,
   FAVMARKITDEL_FAIL,
 
+  //fav photo
+  FAVPHOTO_REQUEST,
+  FAVPHOTO_SUCCESS,
+  FAVPHOTO_FAIL,
+
+  FAVPHOTODEL_REQUEST,
+  FAVPHOTODEL_SUCCESS,
+  FAVPHOTODEL_FAIL,
+
   //captcha
   CAPTCHA_NEEDED,
   CAPTCHA_SET,
@@ -462,6 +471,87 @@ export function favedelMarkit() {
 
 
 
+//////////////////PHOTO////////////////////
+
+export function favegetPhotos(){
+  return function(dispatch, getState){
+    const
+      state = getState(),
+      params = {
+        access_token: state.auth.access_token,
+        methodname: "execute.favephotos_get",
+        targetarr: [],
+        linkparams: {
+          count: 50,
+          offset: 0,
+          photo_sizes: 1
+        },
+        actiontypes: {
+          request: FAVPHOTO_REQUEST,
+          success: FAVPHOTO_SUCCESS,
+          fail: FAVPHOTO_FAIL
+        }
+      };
+
+    getPhotos(params, dispatch);
+    console.log(params.targetarr.splice(-10))
+
+    function getPhotos(params, dispatch) {
+      var
+        { methodname, access_token, linkparams } = params,
+        requestLink = linkCreator(methodname, access_token, linkparams);
+      const { request, success, fail } = params.actiontypes;
+
+      dispatch({type: request, payload: params.targetarr.length});
+
+      jsonpRequest(requestLink)
+        .then(function(response){
+          console.log(response)
+          params.targetarr = params.targetarr.concat(response.items);
+          params.linkparams.offset += response.items.length;
+          console.log(params)
+          if (params.linkparams.offset >= response.count) throw params.targetarr.splice(-10)
+          if (params.linkparams.offset >= response.count) return dispatch({
+              type: success,
+              payload: params.targetarr
+            });
+          setTimeout(function() {
+            getPhotos(params, dispatch)
+          }, 333);
+        })
+        .catch(function(err){
+          err = JSON.stringify(err);
+          return dispatch({
+            type: fail,
+            payload: err
+          });
+        });
+    }
+  };
+};
+
+
+export function favedelPhotos(){
+  return function(dispatch, getState) {
+    const
+      state = getState(),
+      params = {
+        access_token: state.auth.access_token,
+        targetarr: state.favs.photoarr,
+        targettype: "photo",
+
+        actiontypes: {
+          request: FAVPHOTODEL_REQUEST,
+          success: FAVPHOTODEL_SUCCESS,
+          fail: FAVPHOTODEL_FAIL
+        }
+      };
+
+    unLike(params, dispatch);
+  };
+}
+
+/////////////////CAPTCHA/////////////////
 
 export function setCaptcha(captcha_key) {
   return { type: CAPTCHA_SET, payload: captcha_key };

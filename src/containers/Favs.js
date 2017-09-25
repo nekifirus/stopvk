@@ -22,6 +22,8 @@ class Favs extends Component {
         favedelPosts,
         favegetMarkit,
         favedelMarkit,
+        favegetPhotos,
+        favedelPhotos,
         setCaptcha,
         cancelCaptcha,
         submitCaptcha
@@ -86,6 +88,16 @@ class Favs extends Component {
         del = {favedelMarkit}
       />
 
+      <FavView
+        title="Фотографий в закладках:"
+        length={favs.photolength}
+        fetching={favs.fetching}
+        fetchmessage={favs.fetchmessage}
+        completemess={favs.completemess}
+        error = {favs.error}
+        get = {favegetPhotos}
+        del = {favedelPhotos}
+      />
 
 
       {favs.captcha_img

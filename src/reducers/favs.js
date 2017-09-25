@@ -43,6 +43,17 @@ import {
   FAVMARKITDEL_SUCCESS,
   FAVMARKITDEL_FAIL,
 
+  //favs photo
+  FAVPHOTO_REQUEST,
+  FAVPHOTO_SUCCESS,
+  FAVPHOTO_FAIL,
+
+  FAVPHOTODEL_REQUEST,
+  FAVPHOTODEL_SUCCESS,
+  FAVPHOTODEL_FAIL,
+
+  //captcha
+
   CAPTCHA_NEEDED,
   CAPTCHA_SET,
   CAPTCHA_CANCEL,
@@ -65,6 +76,9 @@ const initialState = {
 
   markitarr: '',
   markitlength: '',
+
+  photoarr: '',
+  photolength: '',
 
   fetching: false,
   fetchmessage: '',
@@ -262,6 +276,46 @@ export default function favs(state = initialState, action) {
 
       case FAVMARKITDEL_FAIL:
         return {...state, fetching: false, error: action.payload};
+
+
+      //photo
+      case FAVPHOTO_REQUEST:
+        return {...state,
+                photolength: action.payload,
+                fetching: true,
+                fetchmessage: "Получаю список фотографий в закладках",
+                completemess: '',
+                error: ''
+        };
+
+      case FAVPHOTO_SUCCESS:
+        return {...state, fetching: false,
+                photoarr: action.payload,
+                photolength: action.payload.length };
+
+      case FAVPHOTO_FAIL:
+        return {...state, error: action.payload, fetching: false };
+
+      case FAVPHOTODEL_REQUEST:
+        return {...state,
+                photolength: action.payload,
+                fetching: true,
+                fetchmessage: "Удаляю фотографии из закладок"
+      };
+
+      case FAVPHOTODEL_SUCCESS:
+        return {...state,
+                fetching: false,
+                photolength: 0,
+                completemess: "В закладках больше нет фотографий"
+        };
+
+      case FAVPHOTODEL_FAIL:
+        return {...state, fetching: false, error: action.payload};
+
+
+
+
 
 
       //captcha
