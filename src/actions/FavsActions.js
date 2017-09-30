@@ -53,6 +53,12 @@ import {
   FAVPHOTODEL_SUCCESS,
   FAVPHOTODEL_FAIL,
 
+  FAVPHOTO_SHOWGALERY,
+  FAVPHOTO_SHOWMORE,
+  FAVPHOTO_SELECTIMAGE,
+  FAVPHOTO_SELECTALL,
+
+
   //captcha
   CAPTCHA_NEEDED,
   CAPTCHA_SET,
@@ -65,7 +71,7 @@ import jsonpRequest from '../Utils/jsonpRequest';
 import linkCreator from '../Utils/linkCreator';
 import arrPrepare from '../Utils/arrPrepare';
 import likesPrepare from '../Utils/likesPrepare';
-
+import imagearrPrepare from '../Utils/photoPrepare';
 
 
 
@@ -369,10 +375,14 @@ function getFave(params, dispatch) {
         console.log(response)
         targetarr = targetarr.concat(response.items);
         offset = offset + response.items.length;
-        if (offset >= response.count) return dispatch({
-            type: success,
-            payload: targetarr
+
+        if (offset >= response.count) {
+
+          return dispatch({
+              type: success,
+              payload: targetarr
           });
+        }
         setTimeout(function() {
           faveRequestCycle(offset)
         }, 333);
@@ -480,10 +490,10 @@ export function favegetPhotos(){
       params = {
         access_token: state.auth.access_token,
         methodname: "execute.favephotos_get",
-        targetarr: [],
+        photoarr: [],
         linkparams: {
-          count: 50,
           offset: 0,
+          count: 50,
           photo_sizes: 1
         },
         actiontypes: {
@@ -493,51 +503,153 @@ export function favegetPhotos(){
         }
       };
 
-    getPhotos(params, dispatch);
-    console.log(params.targetarr.splice(-10))
 
-    function getPhotos(params, dispatch) {
-      var
-        { methodname, access_token, linkparams } = params,
-        requestLink = linkCreator(methodname, access_token, linkparams);
-      const { request, success, fail } = params.actiontypes;
+    function getFavePhoto(params) {
+      return new Promise((resolve, reject) => {
+        var {access_token, methodname, linkparams} = params;
+        var requestLink = linkCreator(methodname,
+                                      access_token,
+                                      linkparams);
+        jsonpRequest(requestLink)
+         .then(function(response){
+           params.photoarr = params.photoarr.concat(response.items);
+           params.linkparams.offset = params.linkparams.offset + response.items.length;
 
-      dispatch({type: request, payload: params.targetarr.length});
-
-      jsonpRequest(requestLink)
-        .then(function(response){
-          console.log(response)
-          params.targetarr = params.targetarr.concat(response.items);
-          params.linkparams.offset += response.items.length;
-          console.log(params)
-          if (params.linkparams.offset >= response.count) throw params.targetarr.splice(-10)
-          if (params.linkparams.offset >= response.count) return dispatch({
-              type: success,
-              payload: params.targetarr
-            });
-          setTimeout(function() {
-            getPhotos(params, dispatch)
-          }, 333);
-        })
-        .catch(function(err){
-          err = JSON.stringify(err);
-          return dispatch({
-            type: fail,
-            payload: err
+           if (params.linkparams.offset >= response.count) {
+             resolve (params.photoarr);
+           } else {
+             setTimeout(function() {
+                getFavePhoto(params)
+              }, 333);
+           }
+          })
+          .catch(function(err){
+            reject (err);
           });
-        });
-    }
+      })
+    };
+
+  dispatch({type: params.actiontypes.request, payload: params.photoarr.length})
+  getFavePhoto(params)
+   .then((photoarr) => {
+      Promise.resolve(dispatch({
+        type: params.actiontypes.success,
+        payload: photoarr
+      }))
+    })
+    .then(() => {
+      preparePhoto(dispatch, getState);
+    })
+    .catch((err) => {
+      err = JSON.stringify(err);
+      return dispatch({
+        type: params.actiontypes.fail,
+        payload: err
+      });
+    })
+
   };
 };
+
+export function showFavGalery(){
+ return function (dispatch, getState) {
+   const state = getState();
+   var trigger = state.favs.gallerytrigger;
+
+   preparePhoto(dispatch, getState);
+   trigger = !trigger;
+   dispatch({
+     type: FAVPHOTO_SHOWGALERY,
+     payload: trigger
+   });
+
+
+ }
+};
+
+export function showMoreFavPhotos(){
+  return function(dispatch, getState) {
+    preparePhoto(dispatch, getState);
+
+  }
+}
+
+function preparePhoto(dispatch, getState) {
+  const state = getState();
+  var
+    origarr = state.favs.photoarrorig,
+    photoarr = state.favs.photoarr;
+  console.log(origarr, photoarr)
+
+
+
+  imagearrPrepare(origarr.splice(0, 20))
+    .then((arr) => {
+      console.log(arr)
+      console.log(photoarr)
+      photoarr = photoarr.concat(arr);
+      console.log(photoarr);
+      return photoarr;
+    })
+    .then((arr) => {
+
+      dispatch({
+        type: FAVPHOTO_SHOWMORE,
+        arr: arr,
+        orig: origarr
+      });
+    })
+    .catch((err)=> {
+      err = JSON.stringify(err);
+      return dispatch({
+        type: FAVPHOTO_FAIL,
+        payload: err
+      });
+    })
+}
+
+export function selectFavPhoto(index, image) {
+  return function(dispatch, getState) {
+    const state = getState();
+    var photoarr = state.favs.photoarr;
+    console.log(image)
+    image.isSelected = !image.isSelected;
+    photoarr.splice(index, 1, image);
+
+    dispatch({
+      type: FAVPHOTO_SELECTIMAGE,
+      payload: photoarr
+    });
+  };
+};
+
+export function selectAllFavPhotos() {
+  return function(dispatch, getState) {
+    const state = getState();
+    var
+      photoarr = state.favs.photoarr,
+      photoarrorig = state.favs.photoarrorig;
+
+    photoarr.forEach((item) => item.isSelected = !item.isSelected);
+    photoarrorig.forEach((item) => item.isSelected = !item.isSelected);
+
+    dispatch({
+      type: FAVPHOTO_SELECTALL,
+      arr: photoarr,
+      orig: photoarrorig
+    })
+  }
+}
 
 
 export function favedelPhotos(){
   return function(dispatch, getState) {
     const
-      state = getState(),
+      state = getState();
+    var
       params = {
         access_token: state.auth.access_token,
-        targetarr: state.favs.photoarr,
+        targetarr: [],
         targettype: "photo",
 
         actiontypes: {
@@ -545,7 +657,16 @@ export function favedelPhotos(){
           success: FAVPHOTODEL_SUCCESS,
           fail: FAVPHOTODEL_FAIL
         }
-      };
+      },
+      { photoarr, photoarrorig } = state.favs;
+
+    photoarr = photoarr.concat(photoarrorig);
+    console.log("before delete selected", photoarr)
+    photoarr.forEach((item) => {
+      if(!item.isSelected) params.targetarr.push(item)
+    });
+
+
 
     unLike(params, dispatch);
   };

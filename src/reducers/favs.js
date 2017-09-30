@@ -48,6 +48,11 @@ import {
   FAVPHOTO_SUCCESS,
   FAVPHOTO_FAIL,
 
+  FAVPHOTO_SHOWGALERY,
+  FAVPHOTO_SHOWMORE,
+  FAVPHOTO_SELECTIMAGE,
+  FAVPHOTO_SELECTALL,
+
   FAVPHOTODEL_REQUEST,
   FAVPHOTODEL_SUCCESS,
   FAVPHOTODEL_FAIL,
@@ -77,8 +82,10 @@ const initialState = {
   markitarr: '',
   markitlength: '',
 
-  photoarr: '',
+  photoarrorig: [],
+  photoarr: [],
   photolength: '',
+  gallerytrigger: false,
 
   fetching: false,
   fetchmessage: '',
@@ -290,11 +297,24 @@ export default function favs(state = initialState, action) {
 
       case FAVPHOTO_SUCCESS:
         return {...state, fetching: false,
-                photoarr: action.payload,
+                photoarrorig: action.payload,
                 photolength: action.payload.length };
 
       case FAVPHOTO_FAIL:
         return {...state, error: action.payload, fetching: false };
+
+
+      case FAVPHOTO_SHOWGALERY:
+        return {...state, gallerytrigger: action.payload};
+
+      case FAVPHOTO_SHOWMORE:
+        return {...state, photoarr: action.arr, photoarrorig: action.orig };
+
+      case FAVPHOTO_SELECTIMAGE:
+        return {...state, photoarr: action.payload };
+
+      case FAVPHOTO_SELECTALL:
+        return {...state, photoarr: action.arr, photoarrorig: action.orig };
 
       case FAVPHOTODEL_REQUEST:
         return {...state,

@@ -6,9 +6,15 @@
     "react-scripts": "1.0.11"
   },
   "dependencies": {
+    "image-size": "^0.6.1",
     "jsonp": "^0.2.1",
+    "probe-image-size": "^3.1.0",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
+    "react-grid-gallery": "^0.4.3",
+    "react-images": "^0.5.6",
+    "react-lazyload": "^2.2.7",
+    "react-photo-gallery": "^6.0.3",
     "react-redux": "^5.0.6",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.0",
