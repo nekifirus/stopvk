@@ -1,0 +1,19 @@
+var user_ids = (Args.user_ids).split(",");
+
+var dialogs = [];
+var dialog = {};
+
+while (user_ids.length) {
+    var user_id = parseInt(user_ids.pop());
+    var resp = API.messages.getHistory({
+        "user_id": (user_id),
+        "offset": 0,
+        "count": 1
+        });
+    dialog.owner = user_id;
+    dialog.count = resp.count;
+    dialogs = dialogs + [dialog];
+};
+
+
+return { items: dialogs, count: dialogs.length};

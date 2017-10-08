@@ -585,8 +585,6 @@ function preparePhoto(dispatch, getState) {
 
   imagearrPrepare(origarr.splice(0, 20))
     .then((arr) => {
-      console.log(arr)
-      console.log(photoarr)
       photoarr = photoarr.concat(arr);
       console.log(photoarr);
       return photoarr;

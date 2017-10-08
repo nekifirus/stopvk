@@ -34,7 +34,6 @@ function imgSize(src) {
 
 
 
-
 function imagePrepare(item) {
   return new Promise(function(resolve, reject) {
     var newitem = {};
@@ -78,9 +77,7 @@ export default function imagearrPrepare(arr) {
     });
     var newarr = Promise.all(ArrayOfPromises)
       .then(function(results){
-        console.log(results)
-        newarr = results;
-        return newarr;
+        return results;
       })
       .catch((err) => console.log(err));
     console.log("before resolve", newarr)
