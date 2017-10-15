@@ -22,8 +22,10 @@ import Jumbotron from './components/Jumbotron';
 import Wall from './containers/Wall';
 import Favs from './containers/Favs';
 import Mess from './containers/Messages';
+import Groups from './containers/Groups';
 
 import Gallery from './containers/Gallery';
+
 
 
 const store = configureStore();
@@ -41,6 +43,7 @@ render(
             <Route exact path="/favs" component={Favs} />
             <Route exact path="/messages" component={Mess} />
             <Route exact path="/photos" component={Gallery} />
+            <Route exact path="/groups" component={Groups} />
           </App>
 
           <Route path="/about" component={About} />

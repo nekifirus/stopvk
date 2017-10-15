@@ -610,7 +610,7 @@ export function selectFavPhoto(index, image) {
   return function(dispatch, getState) {
     const state = getState();
     var photoarr = state.favs.photoarr;
-    console.log(image)
+    
     image.isSelected = !image.isSelected;
     photoarr.splice(index, 1, image);
 
