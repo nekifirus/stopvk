@@ -30,7 +30,7 @@ export default function groups(state = initialState, action) {
       return {...state, fetching: true, fetchmessage: 'Получаю список групп',
               groupslength: action.payload };
     case GROUPS_SUCCESS:
-      return {...state, fetching: false, groupsarr: action.payload,
+      return {...state, error: '', fetching: false, groupsarr: action.payload,
               groupslength: action.payload.length };
     case GROUPS_FAIL:
       return {...state, fetching: false, error: action.payload };
@@ -41,7 +41,8 @@ export default function groups(state = initialState, action) {
 
 
     case GROUPSDEL_REQUEST:
-      return {...state, fetching: true, fetchmessage: 'Выхожу из групп'};
+      return {...state, fetching: true, fetchmessage: 'Выхожу из групп',
+              groupslength: action.payload };
 
     case GROUPSDEL_SUCCESS:
       return {...state, fetchin: false, completemess: 'Вышел из групп'};

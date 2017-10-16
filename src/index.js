@@ -23,6 +23,7 @@ import Wall from './containers/Wall';
 import Favs from './containers/Favs';
 import Mess from './containers/Messages';
 import Groups from './containers/Groups';
+import Friends from './containers/Friends';
 
 import Gallery from './containers/Gallery';
 
@@ -44,6 +45,7 @@ render(
             <Route exact path="/messages" component={Mess} />
             <Route exact path="/photos" component={Gallery} />
             <Route exact path="/groups" component={Groups} />
+            <Route exact path="/friends" component={Friends} />
           </App>
 
           <Route path="/about" component={About} />

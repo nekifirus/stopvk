@@ -118,7 +118,7 @@ export function leaveGroups () {
     leaveGroupsRequest(params);
 
     function leaveGroupsRequest(params) {
-      if (!params.groupsarr.length) dispatch({type: GROUPSDEL_SUCCESS})
+      if (!params.groupsarr.length) return dispatch({type: GROUPSDEL_SUCCESS})
 
       var groupstoLeave = params.groupsarr.splice(-count, count).join();
       console.log(groupstoLeave)
