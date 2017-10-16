@@ -6,12 +6,14 @@
     "react-scripts": "1.0.11"
   },
   "dependencies": {
+    "dompurify": "^1.0.2",
     "image-size": "^0.6.1",
     "jsonp": "^0.2.1",
     "probe-image-size": "^3.1.0",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-grid-gallery": "^0.4.3",
+    "react-html-parser": "^2.0.1",
     "react-images": "^0.5.6",
     "react-lazyload": "^2.2.7",
     "react-photo-gallery": "^6.0.3",

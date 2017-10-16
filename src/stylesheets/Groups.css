@@ -80,5 +80,18 @@
   top: 5px;
   right: 30px;
 
+}
 
+.notes-title {
+  padding: 5px;
+  margin: auto;
+  font-size: 1vw;
+}
+
+.box {
+  position: relative;
+}
+
+.is-invisible {
+  display: none !important;
 }

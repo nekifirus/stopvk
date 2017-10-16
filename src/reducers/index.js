@@ -5,6 +5,7 @@ import favs from './favs';
 import mess from './mess';
 import groups from './groups';
 import friends from './friends';
+import notes from './notes';
 
 export default combineReducers({
   auth,
@@ -12,5 +13,6 @@ export default combineReducers({
   favs,
   mess,
   groups,
-  friends
+  friends,
+  notes
 })
