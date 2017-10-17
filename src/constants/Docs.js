@@ -1,0 +1,10 @@
+export const DOCS_REQUEST = 'DOCS_REQUEST';
+export const DOCS_SUCCESS = 'DOCS_SUCCESS';
+export const DOCS_FAIL = 'DOCS_FAIL';
+
+export const DOCS_SELECT = 'DOCS_SELECT';
+export const DOCS_SELECTALL = 'DOCS_SELECTALL';
+
+export const DOCSDEL_REQUEST = 'DOCSDEL_REQUEST';
+export const DOCSDEL_SUCCESS = 'DOCSDEL_SUCCESS';
+export const DOCSDEL_FAIL = 'DOCSDEL_FAIL';
