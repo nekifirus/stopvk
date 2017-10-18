@@ -13,6 +13,7 @@ const Menu = () => <div>
       <div><NavLink className="panel-block" activeClassName="is-active" to="/friends">Друзья</NavLink></div>
       <div><NavLink className="panel-block" activeClassName="is-active" to="/notes">Заметки</NavLink></div>
       <div><NavLink className="panel-block" activeClassName="is-active" to="/docs">Документы</NavLink></div>
+      <div><NavLink className="panel-block" activeClassName="is-active" to="/videos">Видеозаписи</NavLink></div>
   </nav>
 
   <div className="tabs is-centered is-boxed is-hidden-tablet">
@@ -25,7 +26,7 @@ const Menu = () => <div>
       <li><NavLink activeClassName="is-active" to="/friends">Друзья</NavLink></li>
       <li><NavLink activeClassName="is-active" to="/notes">Заметки</NavLink></li>
       <li><NavLink activeClassName="is-active" to="/docs">Документы</NavLink></li>
-
+      <li><NavLink activeClassName="is-active" to="/videos">Видеозаписи</NavLink></li>
 
     </ul>
 

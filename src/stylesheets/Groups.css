@@ -55,9 +55,11 @@
 }
 
 .card-content {
+  position: relative;
   padding: 5px;
   line-height: normal;
   font-size: 0.7rem;
+  text-align: center;
 }
 
 .tagsfield {
@@ -90,6 +92,36 @@
 
 .box {
   position: relative;
+}
+
+
+.modal-card {
+  max-height: none !important;
+}
+.player {
+  overflow: visible;
+  min-height: 400px;
+  max-height: none !important;
+  align-items: center;
+  margin: 0;
+  align-content: center;
+}
+
+.play-button {
+  position:absolute;
+  top:25%;
+  left: 25%;
+  margin:auto;
+  opacity: 0.7;
+  color: red;
+}
+
+.play-button:hover {
+  opacity: 1;
+}
+
+.card-footer {
+
 }
 
 .is-invisible {

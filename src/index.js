@@ -26,6 +26,7 @@ import Groups from './containers/Groups';
 import Friends from './containers/Friends';
 import Notes from './containers/Notes';
 import Docs from './containers/Docs';
+import Videos from './containers/Videos';
 
 import Gallery from './containers/Gallery';
 
@@ -50,6 +51,7 @@ render(
             <Route exact path="/friends" component={Friends} />
             <Route exact path="/notes" component={Notes} />
             <Route exact path="/docs" component={Docs} />
+            <Route exact path="/videos" component={Videos} />
           </App>
 
           <Route path="/about" component={About} />

@@ -7,6 +7,7 @@ import groups from './groups';
 import friends from './friends';
 import notes from './notes';
 import docs from './docs';
+import videos from './videos';
 
 export default combineReducers({
   auth,
@@ -16,5 +17,6 @@ export default combineReducers({
   groups,
   friends,
   notes,
-  docs
+  docs,
+  videos
 })
