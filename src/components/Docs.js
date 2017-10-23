@@ -1,5 +1,7 @@
 import React from 'react';
 
+import {SaveButton} from './Interface';
+
 
 
 export default class DocsView extends React.Component {
@@ -16,13 +18,10 @@ export default class DocsView extends React.Component {
         >
 
       <td className="td" onClick={this.onSelectDoc.bind(this, doc, index)}>
-        {doc.id}
-      </td>
-      <td className="td" onClick={this.onSelectDoc.bind(this, doc, index)}>
         {doc.title}
       </td>
       <td className="td">
-        <a href={doc.url} download={doc.title}><button className="button is-primary">Скачать</button></a>
+        <a href={doc.url} download={doc.title}><SaveButton /></a>
       </td>
 
 

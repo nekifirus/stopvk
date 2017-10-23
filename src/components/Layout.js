@@ -13,9 +13,9 @@ export default class Layout extends Component {
             <Link to="/" className="navbar-item is-large">StopVK</Link>
           </div>
         </div>
-      
 
-      <div className="section">
+
+      <div className="section is-paddingless">
         <div className="Main">{this.props.children}</div>
       </div>
 

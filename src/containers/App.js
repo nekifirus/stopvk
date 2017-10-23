@@ -22,7 +22,7 @@ class App extends Component {
         <User info={info}/>
         <Menu />
       </div>
-      <div className="column">
+      <div className="column is-paddingless">
         {this.props.children}
       </div>
     </div>

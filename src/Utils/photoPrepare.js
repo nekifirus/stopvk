@@ -1,15 +1,13 @@
-function bestImg(sizes, priority) {
+export function bestImg(sizes, priority) {
   //функция берет массив sizes и находит объекты с нужным типом
   var resqueitem;
   priority = priority || ["w", "z", "y", "x", "m", "s"];
-  console.log(sizes)
+
   for (var i=0; i<priority.length; i++) {
     for (var j=0;j<sizes.length; j++) {
-      console.log("sizes[j]: ", sizes[j], "priority[i]: ", priority[i])
       if (sizes[j].type === priority[i]) {
 
         resqueitem = sizes[j];
-        console.log(resqueitem)
         break;
       };
     };
@@ -41,12 +39,14 @@ function imagePrepare(item) {
     var
       bigimg = bestImg(item.sizes),
       thumb = bestImg(item.sizes, ["x", "m", "s", "y", "z", "w"]);
-    console.log(bigimg, thumb)
+
     newitem.src = bigimg.src;
     newitem.thumbnail = thumb.src;
 
     newitem.id = item.id;
     newitem.owner_id = item.owner_id;
+    newitem.album_id = item.album_id;
+    newitem.size = item.size;
     newitem.isSelected = item.isSelected;
 
     if (thumb.width && thumb.height) {
@@ -57,7 +57,6 @@ function imagePrepare(item) {
         .then(function(img) {
           newitem.thumbnailHeight = img.height;
           newitem.thumbnailWidth = img.width;
-          console.log(img.width, img.height)
           resolve (newitem);
         });
     }
@@ -70,17 +69,27 @@ function imagePrepare(item) {
 
 
 
-export default function imagearrPrepare(arr) {
+export function imagearrPrepareBack(arr) {
   return new Promise(function(resolve, reject) {
-    var ArrayOfPromises = arr.map(function(item){
-      return imagePrepare(item);
-    });
+    var ArrayOfPromises = arr.map(imagePrepare);
+
     var newarr = Promise.all(ArrayOfPromises)
       .then(function(results){
+
         return results;
       })
       .catch((err) => console.log(err));
-    console.log("before resolve", newarr)
+
     resolve (newarr);
+  });
+};
+
+
+export default function imagearrPrepare(arr) {
+  return new Promise(function(resolve, reject) {
+    var ArrayOfPromises = arr.map(imagePrepare);
+
+    Promise.all(ArrayOfPromises).then(resolve)
+
   });
 };
