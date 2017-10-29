@@ -1,0 +1,15 @@
+var note_ids = (Args.note_ids).split(",");
+var note_id;
+var r, resp = [];
+
+while (note_ids.length) {
+    note_id = parseInt(note_ids.pop());
+    r = API.notes.delete({
+        "note_id": (note_id),
+        });
+    resp = resp + [r];
+    if (!r) return {error: {error_code: 9, note_ids: note_ids + note_id}};
+};
+
+
+return {resp: resp};

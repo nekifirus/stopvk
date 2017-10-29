@@ -1,0 +1,22 @@
+var count = parseInt(Args.count);
+var offset = parseInt(Args.offset);
+
+var a, b, c, resp, dialogscount, iter = 15, user_ids =[], chats =[];
+
+while(iter) {
+    resp = API.messages.getDialogs({
+        "count": (count),
+        "offset": (offset)
+    });
+    if (!resp.items.length) return {count: dialogscount, items: user_ids, chats: chats};
+    a = resp.items@.message;
+    b = a@.user_id;
+    c = a@.chat_id;
+    if (c) chats = chats + c; else user_ids = user_ids + b;
+    dialogscount = resp.count;
+    offset = offset + resp.items.length;
+    iter = iter - 1;
+};
+
+
+return {count: dialogscount, items: user_ids, chats: chats};

@@ -142,21 +142,28 @@ export const Downloader = (({trigger, percent, file})=> (
       <span className="sr-only">Loading...</span>
       <br />
       <br />
-      <p className="">{file}</p>
+      <p className="subtitle has-text-success">{file}</p>
       <br />
 
       <progress className="progress is-large is-success" value={percent} max={100}></progress>
-      <p className="">Прогресс: {percent}%</p>
+      <p className="">{percent}%</p>
     </Modal>
   </div>
 ));
 
-export const Fetcher = (({trigger, message}) => (
+export const Fetcher = (({trigger, message, percent}) => (
   <div className="has-text-warning">
     <Modal trigger={trigger}>
       <p><i className="fa fa-spinner fa-pulse fa-3x fa-fw"></i></p>
       <br />
-      <p>{message}</p>
+      <p className="subtitle has-text-warning">{message}</p>
+
+      {percent &&
+        <div>
+          <progress className="progress is-large is-warning" value={percent} max={100}></progress>
+          <p className="">{percent}%</p>
+        </div>
+      }
     </Modal>
   </div>
 ))

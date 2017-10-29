@@ -1,0 +1,13 @@
+var group_ids = (Args.group_ids).split(",");
+var todelete, resp;
+
+while (group_ids.length) {
+    todelete = group_ids.pop();
+    resp = API.groups.leave({
+        "group_id": (todelete)
+        });
+    if (!resp) return {resp: resp};
+};
+
+
+return "Success";

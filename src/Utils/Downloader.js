@@ -15,7 +15,7 @@ function downloadBlob(url) {
 
     try {
             var xhr = new XMLHttpRequest();
-            xhr.open("GET", "https://cors-anywhere.herokuapp.com/" +url);
+            xhr.open("GET", "https://cors-anywhere.herokuapp.com/" + url);
             xhr.responseType = "blob";
             xhr.onerror = function() {reject("Network error.")};
             xhr.onload = function() {
@@ -34,6 +34,7 @@ function downloadBlob(url) {
 
 export default function downloadAsZip(images, title, dispatch) {
   return new Promise(function(resolve, reject) {
+
     function dispatchSavingProgress(metadata) {
       dispatch({
         type: DL_PROGRESS,
@@ -42,13 +43,15 @@ export default function downloadAsZip(images, title, dispatch) {
       });
     }
 
-    
+
     var zip = new JSZip();
 
-    var ArrayofBlobsPromisess = images.map(downloadBlob);
 
-    ArrayofBlobsPromisess.forEach((item, index) => {
-      zip.folder(title).file(index + 1 + ".jpg", item)
+
+    images.forEach((item, index) => {
+
+      zip.folder(title).file(index + 1 + ".jpg", downloadBlob(item.src),
+                      {date: new Date(Number(item.date) *1000)})
     })
 
     console.log(zip)

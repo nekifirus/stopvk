@@ -1,0 +1,15 @@
+var photo_ids = (Args.photo_ids).split(",");
+var photo_id;
+var r, resp = [];
+
+while (photo_ids.length) {
+    photo_id = parseInt(photo_ids.pop());
+    r = API.photos.delete({
+        "photo_id": (photo_id),
+        });
+    resp = resp + [r];
+    if (!r) return {error: {error_code: 9, photo_ids: photo_ids + photo_id}};
+};
+
+
+return {resp: resp};

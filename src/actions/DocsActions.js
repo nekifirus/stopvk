@@ -15,9 +15,49 @@ import {
 import jsonpRequest from '../Utils/jsonpRequest';
 import linkCreator from '../Utils/linkCreator';
 
+import {getwithOffset} from '../Utils/Requester';
 
 
-export function getDocs(){
+export function getDocs() {
+  return (dispatch, getState) => {
+    const
+     state = getState();
+
+    var
+      params = {
+        methodname: "docs.get",
+        access_token: state.auth.access_token,
+        targetarr: [],
+        requestparams: {
+          count: 100,
+          offset: 0
+        }
+      };
+
+  dispatch({
+      type: DOCS_REQUEST,
+  })
+
+
+  getwithOffset(params)
+    .then((docsarr) => {
+      dispatch({
+        type: DOCS_SUCCESS,
+        payload: docsarr
+      });
+    })
+    .catch((e) => {
+      return dispatch({
+        type: DOCS_FAIL,
+        payload: e
+      });
+    })
+
+  }
+
+}
+
+export function getDocsOld(){
   return function(dispatch, getState) {
     const
      state = getState(),

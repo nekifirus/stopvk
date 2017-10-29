@@ -1,0 +1,27 @@
+var count = 1000;
+var offset = 0;
+
+
+
+var iter = 20;
+var resp;
+var items = [];
+var itemscount;
+
+while(iter) {
+    resp = API.photos.get({
+            "album_id": (Args.album_id),
+            "photo_sizes": 1,
+            "count": (count),
+            "offset": (offset)
+            });
+    if (!resp.items.length) return {count: itemscount, items: items};
+    items = items + resp.items;
+    itemscount = resp.count;
+    iter = iter - 1;
+    offset = offset + resp.items.length;
+}
+
+
+
+return {count: itemscount, items: items};

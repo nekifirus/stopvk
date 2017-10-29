@@ -33,8 +33,9 @@ class Photos extends React.Component {
       saveAlbum,
       saveSelectedImagesInAlbum,
       saveSelectedAlbums,
-      saveSelected,
-      delAlbums
+
+      delAlbums,
+      delSelectedInAlbum
     } = this.props.photoActions;
 
     return <div className="">
@@ -56,13 +57,14 @@ class Photos extends React.Component {
 
       {photos.viewtrigger &&
         <ModalGalery
-          album={photos.albumtoview}
+          album={photos.photoalbums[photos.albumtoview]}
           trigger={photos.viewtrigger}
           close={closeAlbumView}
           select={selectImginAlbum}
           selectAll={selectAllIMGinAlbum}
           drop={dropIMGselectioninALbums}
           save={saveSelectedImagesInAlbum}
+          del={delSelectedInAlbum}
         />
       }
 
@@ -78,6 +80,7 @@ class Photos extends React.Component {
       {photos.fetching &&
         <Fetcher trigger={photos.fetching}
                  message={photos.fetchmessage}
+                 percent={photos.percent}
         />
       }
 

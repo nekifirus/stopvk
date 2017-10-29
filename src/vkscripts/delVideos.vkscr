@@ -1,0 +1,15 @@
+var video_ids = (Args.video_ids).split(",");
+var video_id;
+var r, resp = [];
+
+while (video_ids.length) {
+    video_id = parseInt(video_ids.pop());
+    r = API.video.delete({
+        "video_id": (video_id),
+        });
+    resp = resp + [r];
+    if (!r) return {error: {error_code: 9, video_ids: video_ids + video_id}};
+};
+
+
+return {resp: resp};

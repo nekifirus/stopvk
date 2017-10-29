@@ -4,10 +4,16 @@ import { Modal, GroupButtons } from './Interface';
 
 export default class ModalGalery extends React.Component {
 
+  componentDidMount() {
+    setTimeout(()=>{
+      console.log("force")
+      this.forceUpdate()
+    }, 2000)
+  }
 
 
   render() {
-    const { album, close, trigger, select, selectAll, drop, save} = this.props;
+    const { album, close, trigger, select, selectAll, drop, save, del} = this.props;
 
 
 
@@ -22,6 +28,7 @@ export default class ModalGalery extends React.Component {
                   selectAll={selectAll}
                   drop={drop}
                   save={save}
+                  del={del}
                   />
                 <Gallery images={album.items} margin={1} onSelectImage={select}/>
               </div>

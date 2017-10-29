@@ -1,0 +1,28 @@
+var user_ids = (Args.user_ids).split(",");
+
+var dialogs = [];
+var dialog = {};
+var resp;
+
+while (user_ids.length) {
+    var user_id = parseInt(user_ids.pop());
+    if (user_id > 2000000000) {
+        resp = API.messages.getHistory({
+        "peer_id": (user_id),
+        "offset": 0,
+        "count": 1
+        });
+    } else {
+        resp = API.messages.getHistory({
+        "user_id": (user_id),
+        "offset": 0,
+        "count": 1
+        });
+    }
+    dialog.user_id = user_id;
+    dialog.count = resp.count;
+    dialogs = dialogs + [dialog];
+};
+
+
+return { items: dialogs};

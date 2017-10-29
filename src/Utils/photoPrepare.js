@@ -32,6 +32,8 @@ function imgSize(src) {
 
 
 
+
+
 function imagePrepare(item) {
   return new Promise(function(resolve, reject) {
     var newitem = {};
@@ -46,6 +48,10 @@ function imagePrepare(item) {
     newitem.id = item.id;
     newitem.owner_id = item.owner_id;
     newitem.album_id = item.album_id;
+    newitem.date = item.date;
+    newitem.liled = item.liked;
+    newitem.tagget = item.tagget;
+    newitem.user_id = item.user_id;
     newitem.size = item.size;
     newitem.isSelected = item.isSelected;
 
@@ -54,12 +60,12 @@ function imagePrepare(item) {
       newitem.thumbnailWidth = thumb.width;
     } else {
       imgSize(thumb.src)
-        .then(function(img) {
+        .then(img => {
           newitem.thumbnailHeight = img.height;
           newitem.thumbnailWidth = img.width;
-          resolve (newitem);
-        });
+        })
     }
+
 
     resolve (newitem);
   })
@@ -85,11 +91,17 @@ export function imagearrPrepareBack(arr) {
 };
 
 
-export default function imagearrPrepare(arr) {
-  return new Promise(function(resolve, reject) {
-    var ArrayOfPromises = arr.map(imagePrepare);
+export default async function imagearrPrepare(arr) {
 
-    Promise.all(ArrayOfPromises).then(resolve)
 
-  });
+  var newarr = [];
+
+  while(arr.length) {
+    let item = arr.pop();
+    item = await imagePrepare(item);
+    newarr.push(item);
+  }
+
+  return newarr;
+
 };

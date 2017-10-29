@@ -12,3 +12,12 @@ export default function linkCreator(methodname, access_token, params) {
     "v=5.68";
   return link;
 }
+
+
+
+export function executeLinkCreator(codearr, access_token) {
+  let code = codearr.join(' ') + 'return "1";'
+  return (
+    linkCreator("execute", access_token, {code: code})
+  )
+}

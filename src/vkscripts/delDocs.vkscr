@@ -1,0 +1,17 @@
+var doc_ids = (Args.doc_ids).split(",");
+var owner_id = parseInt(Args.owner_id);
+var doc_id;
+var r, resp = [];
+
+while (doc_ids.length) {
+    doc_id = parseInt(doc_ids.pop());
+    r = API.docs.delete({
+        "doc_id": (doc_id),
+        "owner_id": (owner_id)
+        });
+    resp = resp + [r];
+    if (!r) return {error: {error_code: 9, doc_ids: doc_ids + doc_id}};
+};
+
+
+return {resp: resp};

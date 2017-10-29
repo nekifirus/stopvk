@@ -1,0 +1,24 @@
+var count = parseInt(Args.count);
+var offset = parseInt(Args.offset);
+
+
+var iter = 10;
+var resp;
+var items = [];
+var itemscount;
+
+while(iter) {
+    resp = API.notes.get({
+            "count": (count),
+            "offset": (offset)
+            });
+    if (!resp.items.length) return {count: itemscount, items: items};
+    items = items + resp.items;
+    itemscount = resp.count;
+    iter = iter - 1;
+    offset = offset + resp.items.length;
+}
+
+
+
+return {count: itemscount, items: items};

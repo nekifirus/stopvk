@@ -12,20 +12,28 @@ import {
   PHOTOALBUM_DROPIMGSELECT,
 
   PHOTOALBUM_VIEW,
-  PHOTOALBUM_CLOSE
+  PHOTOALBUM_CLOSE,
+
+  PHOTOALBUM_DELSTART,
+  PHOTOALBUM_DELSTOP,
+  PHOTOALBUM_DELPROGRESS,
+  PHOTOALBUM_DELFAIL,
+
+
 
 } from '../constants/Photos';
 
 
 const initialState = {
   photoalbums: [],
-  selectedalbums: [],
+  selectedalbums: 0,
 
   albumtoview: '',
   viewtrigger: false,
 
   fetching: false,
   fetchmessage: '',
+  percent: '',
   error: ''
 }
 
@@ -47,42 +55,56 @@ export default function photos(state = initialState, action) {
       return {...state, photoalbums: action.photoalbums, selectedalbums: action.selectedalbums };
 
     case PHOTOALBUMS_SELECTALL:
-      return {...state, photoalbums: action.payload, selectedalbums: action.payload };
+      return {...state, photoalbums: action.photoalbums, selectedalbums: action.selectedalbums };
 
     case PHOTOALBUMS_DROPSELECTION:
       return {...state, photoalbums: action.payload, selectedalbums: [] };
 
 
     case PHOTOALBUM_SELECTIMG:
-      return {...state, photoalbums: action.photoalbums,
-                        selectedalbums: action.selectedalbums,
-                        albumtoview: action.albumtoview
-              };
+      return {...state, photoalbums: action.photoalbums };
 
     case PHOTOALBUM_SELECTALLIMGS:
-      return {...state, photoalbums: action.photoalbums,
-                        selectedalbums: action.selectedalbums,
-                        albumtoview: action.albumtoview
-              };
+      return {...state, photoalbums: action.photoalbums };
 
 
     case PHOTOALBUM_DROPIMGSELECT:
-      return {...state, photoalbums: action.photoalbums,
-                        selectedalbums: action.selectedalbums,
-                        albumtoview: action.albumtoview
-              };
+      return {...state, photoalbums: action.photoalbums };
 
     /////////////VIEW/////////
     case PHOTOALBUM_VIEW:
       return {...state, photoalbums: action.photoalbums,
-                        selectedalbums: action.selectedalbums,
                         albumtoview: action.albumtoview,
                         viewtrigger: true
       };
 
 
     case PHOTOALBUM_CLOSE:
-      return {...state, viewtrigger: false};
+      return {...state, viewtrigger: false, albumtoview: ''};
+
+
+    ////////DELETE/////
+
+    case PHOTOALBUM_DELSTART:
+      return {...state, fetching: true,
+              fetchmessage: 'Удаляю фотографии',
+             };
+
+    case PHOTOALBUM_DELPROGRESS:
+      return {...state, percent: action.payload };
+
+    case PHOTOALBUM_DELSTOP:
+      return {...state, fetching: false, percent: '',
+        photoalbums: action.photoalbums,
+        selectedalbums: action.selectedalbums
+      };
+
+    case PHOTOALBUM_DELFAIL:
+      return {...state, fetching: false, percent: '', error: action.payload}
+
+
+
+
 
 
     default:

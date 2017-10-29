@@ -65,7 +65,7 @@ export default class AlbumsView extends React.Component {
     return(
     <div className="box">
 
-      <Counters all={albums.length} selected={selectedalbums.length} />
+      <Counters all={albums.length} selected={selectedalbums} />
 
       <GroupButtons selectAll={selectAll} drop={drop} save={save} del={del} />
 

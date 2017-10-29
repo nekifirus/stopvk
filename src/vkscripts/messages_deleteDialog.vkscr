@@ -1,0 +1,15 @@
+var user_ids = (Args.user_ids).split(",");
+var user_id;
+var r, resp = [];
+
+while (user_ids.length) {
+    user_id = parseInt(user_ids.pop());
+    r = API.messages.deleteDialog({
+        "user_id": (user_id),
+        });
+    resp = resp + [r];
+    if (!r) return {error: {error_code: 9, user_ids: user_ids + user_id}};
+};
+
+
+return {resp: resp};
