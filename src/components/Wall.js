@@ -1,45 +1,35 @@
 import React from 'react';
 
+import {
+  DelButton,
+  Counters
+} from './Interface';
+
 
 export class Wall extends React.Component {
+  componentDidMount() {
+    this.props.get()
+  }
+
   render() {
     const {
-      length,
-      trigger,
-      fetching,
-      fetchmessage,
-      completemess
+      posts,
+      del
     } = this.props;
 
-    const {
-      requestWallPosts,
-      startWallDelete,
-      stopWallDelete
-    } = this.props.wallActions;
 
-    const Buttons = () => {
-      if (trigger) {
-        return <btn onClick={stopWallDelete} className="button is-danger is-large">Я передумал</btn>
-      } else {
-        return <btn onClick={startWallDelete} className="button is-primary is-medium">Удалить нах!</btn>
-      }
-    }
 
-  return <div className="">
-    <btn onClick={requestWallPosts}>получить</btn>
-    <h3 className="subtitle">Записей на стене:</h3>
-    <p className="title">{length}</p>
+  return (
+    <div className="box has-text-centered">
 
-    <div className="">
-      {fetching ? <p className="help is-danger is-large">{fetchmessage}</p> : ''}
+      <div className="title">Записей на стене всего:</div>
+
+      <Counters all={posts.length} />
+      <DelButton del={del} />
+
+
     </div>
-    {completemess ? <div className="help is-large is-success">{completemess}</div> : ''}
-    <br /><br />
-    {length ? <Buttons /> : ''}
-
-
-
-  </div>
+  )
 
 
 

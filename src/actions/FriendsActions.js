@@ -14,27 +14,126 @@ import {
 
 import jsonpRequest from '../Utils/jsonpRequest';
 import linkCreator from '../Utils/linkCreator';
+import {apiUnFriend} from '../Utils/APImethods';
+import {deleteWithExecute} from '../Utils/Requester';
 
 
 
 
 export function getFriends() {
   return function(dispatch, getState) {
-    FriendsGet(dispatch, getState)
+
+    function friendsRequest() {
+      return {type: FRIENDS_REQUEST}
+    }
+
+    function friendsSuccess(friendsarr) {
+      return {type: FRIENDS_SUCCESS, payload: friendsarr}
+    }
+
+    function friendsFail(e) {
+      return {type: FRIENDS_FAIL, payload: e}
+    }
+
+    const
+      state = getState(),
+      access_token = state.auth.access_token;
+
+    let url = linkCreator("friends.get", access_token, {
+      count: 5000,
+      offset: 0,
+      fields: "domain,photo_max,common_count",
+      order: "hints"
+    })
+
+    dispatch(friendsRequest());
+
+    jsonpRequest(url)
+      .then(response => dispatch(friendsSuccess(response.items)))
+      .catch(err => dispatch(friendsFail(JSON.stringify(err))))
+
   }
 }
+
+
+
+
+
+
+export function unFriend() {
+  return function(dispatch, getState) {
+
+    function unFriendStart() {
+      return {type: FRIENDSDEL_REQUEST}
+    }
+
+    function unFriendStop(friendsarr) {
+      return {type: FRIENDSDEL_SUCCESS, payload: friendsarr}
+    }
+
+    function unFriendFail(e) {
+      return {type: FRIENDSDEL_FAIL, payload: JSON.stringify(e)}
+    }
+
+    const
+      state = getState(),
+      access_token = state.auth.access_token;
+
+    var
+      friendsarr = state.friends.friendsarr,
+      friendstodellarr = [];
+
+    friendsarr.forEach((friend) => {
+      if (friend.isSelected) friendstodellarr.push(friend);
+    });
+
+
+    dispatch(unFriendStart());
+
+    deleteWithExecute(friendstodellarr, access_token, apiUnFriend)
+      .then(deleted => {
+        deleted.forEach(friend => {
+          let idx = friendsarr.indexOf(friend);
+          friendsarr.splice(idx, 1)
+        })
+        dispatch(unFriendStop(friendsarr));
+      })
+      .catch(err => {
+        err.deleted.forEach(friend => {
+          let idx = friendsarr.indexOf(friend);
+          friendsarr.splice(idx, 1)
+        })
+        dispatch(unFriendStop(friendsarr));
+        dispatch(unFriendFail(JSON.stringify(err.error)))
+      })
+
+  }
+}
+
+
+
+
 
 export function selectFriend(friend, index){
   return function(dispatch, getState) {
     const state = getState();
-    var friendsarr = state.friends.friendsarr;
+    var
+      friendsarr = state.friends.friendsarr,
+      friendsselected = state.friends.friendsselected;
 
     friend.isSelected = !friend.isSelected;
     friendsarr.splice(index, 1, friend);
 
+    if(friend.isSelected) {
+      friendsselected += 1;
+    } else {
+      friendsselected -= 1;
+    }
+
     dispatch({
       type: FRIENDS_SELECT,
-      payload: friendsarr
+      payload: friendsarr,
+      friendsselected: friendsselected
     })
   }
 }
@@ -50,126 +149,29 @@ export function selectAllFriends() {
 
     dispatch({
       type: FRIENDS_SELECTALL,
-      payload: friendsarr
+      payload: friendsarr,
+      friendsselected: friendsarr.length
     })
 
   }
 }
 
 
-export function unFriend() {
+
+export function dropFriendsSelection() {
   return function(dispatch, getState) {
+    const state = getState();
+    var friendsarr = state.friends.friendsarr;
 
-    const
-      state = getState(),
-      access_token = state.auth.access_token,
-      methodname = "execute.unFriend",
-      count = 10;
-
-    var friendstodellarr = [];
-
-
-
-    state.friends.friendsarr.forEach((friend) => {
-      if (friend.isSelected) friendstodellarr.push(friend.id)
+    friendsarr.forEach((friend, index) => {
+      friendsarr[index].isSelected = false;
     })
 
-
     dispatch({
-      type: FRIENDSDEL_REQUEST
-    });
-
-    Promise.resolve(unFriendRequest(friendstodellarr))
-      .then(() => {
-        setTimeout(function() {
-          FriendsGet(dispatch, getState)
-        }, 3333)
-      })
-
-    function unFriendRequest(friendsarr) {
-      if(!friendstodellarr.length) return dispatch({type: FRIENDSDEL_SUCCESS});
-      var friendsToDelete = friendstodellarr.splice(-count, count);
-      var requestLink = linkCreator(methodname, access_token,
-                                    {user_ids: friendsToDelete.join()});
-
-      dispatch({
-        type: FRIENDSDEL_REQUEST
-      });
-
-      jsonpRequest(requestLink)
-        .then((response) => {
-
-          setTimeout(function() {
-            unFriendRequest(friendsarr)
-          }, 333)
-        })
-        .catch((err) => {
-          err = JSON.stringify(err);
-          return dispatch({
-            type: FRIENDSDEL_FAIL,
-            payload: err
-          });
-        })
-
-
-    }
-
-  }
-}
-
-function FriendsGet(dispatch, getState) {
-  const state = getState();
-  var params = {
-    access_token: state.auth.access_token,
-    methodname: "friends.get",
-    linkparams: {
-      count: 5000,
-      offset: 0,
-      fields: "domain,photo_max,common_count",
-      order: "hints"
-    },
-    friendsarr: []
-  };
-
-
-  dispatch({
-    type: FRIENDS_REQUEST
-  });
-
-  getFriendsRequest(params);
-
-  function getFriendsRequest(params){
-    const { methodname, access_token } = params;
-
-    var requestLink = linkCreator(methodname, access_token, params.linkparams);
-
-    dispatch({
-      type: FRIENDS_REQUEST,
-      payload: params.friendsarr.length
+      type: FRIENDS_SELECTALL,
+      payload: friendsarr,
+      friendsselected: 0
     })
 
-    jsonpRequest(requestLink)
-      .then((response) => {
-        params.friendsarr = params.friendsarr.concat(response.items);
-        params.linkparams.offset = params.linkparams.offset + response.items.length;
-
-        if(params.linkparams.offset >= response.count) {
-          dispatch({
-            type: FRIENDS_SUCCESS,
-            payload: params.friendsarr
-          });
-        } else {
-          setTimeout(function() {
-            getFriendsRequest(params)
-          }, 333);
-        }
-      })
-      .catch((err) => {
-        err = JSON.stringify(err);
-        return dispatch({
-          type: FRIENDS_FAIL,
-          payload: err
-        });
-      });
   }
 }

@@ -1,18 +1,28 @@
 import React from 'react';
 import DOMPurify from 'dompurify';
 
+import {
+  GroupButtons,
+  Counters
+} from './Interface';
+
 
 export default class NotesView extends React.Component {
+  componentDidMount() {
+    this.props.get()
+  }
   onSelectNote (note, index) {
         this.props.select.call(this, note, index);
   }
+
   render() {
 
-    const { notesarr, selectAll } = this.props;
+    const { notesarr, selected, selectAll, drop, del } = this.props;
 
     const NoteText = ((text) => DOMPurify.sanitize(text))
 
-    const NoteCard = (({note, index}) => <div className="box"
+    const NoteCard = (({note, index}) => (
+      <div className="box"
                           onClick={this.onSelectNote.bind(this, note, index)}>
       <div>
         <div className={note.isSelected ? "select-ico fa-3x" : "is-invisible"}>
@@ -23,7 +33,8 @@ export default class NotesView extends React.Component {
 
 
       <div className="notes-text" dangerouslySetInnerHTML={{__html: NoteText(note.text)}}></div>
-    </div>);
+    </div>
+  ));
 
     const NotesGroup = notesarr.map((note, index) => <NoteCard
       key={note.id} note={note} index={index} />
@@ -33,9 +44,10 @@ export default class NotesView extends React.Component {
 
 
     return(
-      <div className="noteview">
-        <button type="button" className="button is-primary"
-                onClick={selectAll}>Выделить все</button>
+      <div className="box">
+        <Counters all={notesarr.length} selected={selected} />
+        <GroupButtons selectAll={selectAll} drop={drop} del={del} />
+
         {NotesGroup}
       </div>
 

@@ -42,10 +42,11 @@ export default class AlbumsView extends React.Component {
     const Album = (({album, index}) => <div className="box album-card">
         <div className="album-cover">
           <img src={album.thumb_src} alt={album.title} />
+            <div className="album-count">
 
-          <div className="album-count">
-              {album.size}
-          </div>
+                {album.size}
+            </div>
+
           <div className="album-title has-text-centered">
               {album.title}
               <TitleButtonsGroup

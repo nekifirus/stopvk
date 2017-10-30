@@ -3,9 +3,9 @@ import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux';
 import * as docsActions from '../actions/DocsActions';
 
-import { FavView } from '../components/Favs';
-import DocsView from '../components/Docs';
 
+import DocsView from '../components/Docs';
+import {Fetcher} from '../components/Interface';
 
 
 class Docs extends Component {
@@ -15,27 +15,33 @@ class Docs extends Component {
       getDocs,
       delDocs,
       selectDoc,
-      selectAllDocs
+      selectAllDocs,
+      dropDocsSelection
     } = this.props.docsActions;
 
-    return <div>
-      <FavView
-        title="У вас докментов:"
-        length={docs.docslength}
-        fetching={docs.fetching}
-        fetchmessage={docs.fetchmessage}
-        completemess={docs.completemess}
-        error = {docs.error}
-        get = {getDocs}
-        del = {delDocs}
-      />
+    return (
+
+    <div>
+
 
     <DocsView docsarr={docs.docsarr}
-                 select={selectDoc}
-                 selectAll={selectAllDocs} />
+              selected={docs.selecteddocs}
+              get = {getDocs}
+              del = {delDocs}
+              select={selectDoc}
+              selectAll={selectAllDocs}
+              drop={dropDocsSelection}
+      />
+
+    {docs.fetching &&
+         <Fetcher trigger={docs.fetching}
+                  message={docs.fetchmessage}
+
+           />
+      }
 
   </div>
-
+    )
   }
 }
 

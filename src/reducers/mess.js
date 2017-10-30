@@ -10,13 +10,11 @@ import {
 
 
 const initialState = {
-  messagesarr: [],
-  chatsarr: [],
-  messageslength: '',
+  dialogsarr: [],
+  percent: '',
 
   fetching: false,
   fetchmessage: '',
-  completemess: '',
 
   error: ''
 }
@@ -27,16 +25,16 @@ export default function mess(state = initialState, action) {
     case MESSAGE_REQUEST:
       return {...state,
               fetching: true, fetchmessage: action.message,
-              messageslength: action.payload
+              percent: action.payload
       };
     case MESSAGE_SUCCESS:
       return {...state,
               fetching: false,
-              messagesarr: action.payload,
-              messageslength: action.count
+              dialogsarr: action.payload
       };
     case MESSAGE_FAIL:
       return {...state, fetching: false, error: action.payload };
+
 
     case MESSAGEDEL_REQUEST:
       return {...state, fetching: true,

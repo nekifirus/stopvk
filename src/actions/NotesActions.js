@@ -12,109 +12,125 @@ import {
 
 } from '../constants/Notes';
 
-import jsonpRequest from '../Utils/jsonpRequest';
-import linkCreator from '../Utils/linkCreator';
 
+import {getwithOffset, deleteWithExecute} from '../Utils/Requester';
+import {apiDelNotes} from '../Utils/APImethods';
 
 export function getNotes(){
   return function(dispatch, getState) {
     const
-     state = getState(),
-     access_token = state.auth.access_token,
-     methodname = "execute.getNotes",
-     count = 100;
-    var
-      offset = 0,
-      notesarr = [];
+     state = getState();
+
+
+    var params = {
+      access_token: state.auth.access_token,
+      methodname: "notes.get",
+      targetarr: [],
+      requestparams: {
+        count: 100,
+        offset: 0
+      }
+    }
+
 
     dispatch({
       type: NOTES_REQUEST,
     })
 
-    getNotesRequest(notesarr);
-
-    function getNotesRequest(notesarr){
-      var requestLink = linkCreator(methodname, access_token,
-                                    {count: count, offset: offset});
-
-      jsonpRequest(requestLink)
-        .then((response) => {
-          notesarr = notesarr.concat(response.items);
-          offset += response.items.length;
-          if(offset >= response.count) {
-            dispatch({
-              type: NOTES_SUCCESS,
-              payload: notesarr
-            });
-          } else {
-            setTimeout(function(){
-              getNotesRequest(notesarr);
-            }, 333);
-          }
+    getwithOffset(params)
+      .then(notes => {
+        dispatch({
+          type: NOTES_SUCCESS,
+          payload: notes
         })
-        .catch((err) => {
-          err = JSON.stringify(err);
-          return dispatch({
-            type: NOTES_FAIL,
-            payload: err
-          });
+      })
+      .catch(e => {
+        dispatch({
+          type: NOTES_FAIL,
+          payload: e.toString()
         })
-    }
+      })
+
   }
 }
 
-export function delNotes(){
-  return function(dispatch, getState){
+
+
+export function delNotes() {
+  return function(dispatch, getState) {
     const
       state = getState(),
-      access_token = state.auth.access_token,
-      methodname = "execute.delNotes",
-      count = 20;
+      access_token = state.auth.access_token;
 
-    var selectednotes = [];
-    state.notes.notesarr.forEach((note) => {
-      if(note.isSelected) selectednotes.push(note.id);
-    })
+    var
+      notesarr = state.notes.notesarr,
+      notesToDelete = [], notesToSave = [];
 
-    dispatch({type: NOTESDEL_REQUEST});
+      notesarr.forEach((note) => {
+        if(note.isSelected) {
+          notesToDelete.push(note);
+        } else {
+          notesToSave.push(note)
+        }
+      });
 
-    delNotesRequest(selectednotes);
+      var initiallength = notesToDelete.length;
 
-    function delNotesRequest(notesarr) {
-      if(!notesarr.length) return dispatch({type: NOTESDEL_SUCCESS});
-      var notesToDelete = notesarr.splice(-count, count);
-      var requestLink = linkCreator(methodname, access_token,
-                                    {note_ids: notesToDelete.join()});
+      dispatch({
+        type: NOTESDEL_REQUEST
+      })
 
-      jsonpRequest(requestLink)
-        .then((response) => {
-          setTimeout(function(){
-            delNotesRequest(notesarr);
-          }, 333);
+      deleteWithExecute(notesToDelete, access_token, apiDelNotes)
+        .then(deleted => {
+          dispatch({
+            type: NOTESDEL_SUCCESS,
+            payload: notesToSave,
+            selectednotes: 0
+          })
         })
-        .catch((err) => {
-          err = JSON.stringify(err);
-          return dispatch({
-            type: NOTESDEL_FAIL,
-            payload: err
+        .catch(err => {
+          err.deleted.forEach(note => {
+            let idx = notesarr.indexOf(note);
+            notesarr.splice(idx, 1)
+          })
+          dispatch({
+            type: NOTESDEL_SUCCESS,
+            payload: notesarr,
+            selectednotes: (initiallength - err.deleted.length)
           });
+          dispatch({
+            type: NOTESDEL_FAIL,
+            payload: JSON.stringify(err.error)
+          })
         })
-    }
 
   }
 }
+
+
+
+
 
 export function selectNote(note, index){
   return function(dispatch, getState){
     const state = getState();
-    var notesarr = state.notes.notesarr;
+    var
+      notesarr = state.notes.notesarr,
+      selectednotes = state.notes.selectednotes;
 
     note.isSelected = !note.isSelected;
     notesarr.splice(index, 1, note);
 
+    if(note.isSelected) {
+      selectednotes += 1;
+    } else {
+      selectednotes -= 1;
+    }
+
     dispatch({
       type: NOTES_SELECT,
-      payload: notesarr
+      payload: notesarr,
+      selectednotes: selectednotes
     })
   }
 }
@@ -130,7 +146,25 @@ export function selectAllNotes(){
 
     dispatch({
       type: NOTES_SELECTALL,
-      payload: notesarr
+      payload: notesarr,
+      selectednotes: notesarr.length
+    });
+  }
+}
+
+export function dropNotesSelection(){
+  return function(dispatch, getState){
+    const state = getState();
+    var notesarr = state.notes.notesarr;
+
+    notesarr.forEach((note, index) => {
+      notesarr[index].isSelected = false;
+    })
+
+    dispatch({
+      type: NOTES_SELECTALL,
+      payload: notesarr,
+      selectednotes: 0
     });
   }
 }

@@ -15,11 +15,10 @@ import {
 
 const initialState = {
   docsarr: [],
-  docslength: '',
+  selecteddocs: '',
 
   fetching: false,
   fetchmessage: '',
-  completemess: '',
 
   error: ''
 }
@@ -27,28 +26,25 @@ const initialState = {
 export default function docs(state = initialState, action) {
   switch (action.type) {
     case DOCS_REQUEST:
-      return {...state, fetching: true, fetchmessage: 'Получаю список документов',
-              docslength: action.payload };
+      return {...state, fetching: true, fetchmessage: 'Получаю список документов'};
     case DOCS_SUCCESS:
-      return {...state, error: '', fetching: false, docsarr: action.payload,
-              docslength: action.payload.length };
+      return {...state, error: '', fetching: false, docsarr: action.payload};
     case DOCS_FAIL:
       return {...state, fetching: false, error: action.payload };
 
 
     case DOCS_SELECT:
-      return {...state, docsarr: action.payload };
+      return {...state, docsarr: action.payload, selecteddocs: action.selecteddocs };
 
     case DOCS_SELECTALL:
-      return {...state, docsarr: action.payload };
+      return {...state, docsarr: action.payload, selecteddocs: action.selecteddocs };
 
 
     case DOCSDEL_REQUEST:
-      return {...state, fetching: true, fetchmessage: 'Удаляю документы',
-              moteslength: action.payload };
+      return {...state, fetching: true, fetchmessage: 'Удаляю документы'};
 
     case DOCSDEL_SUCCESS:
-      return {...state, fetchin: false, completemess: 'Удалил документы'};
+      return {...state, fetching: false, docsarr: action.payload, selecteddocs: action.selecteddocs };
 
     case DOCSDEL_FAIL:
       return {...state, fetching: false, error: action.payload };

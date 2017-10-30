@@ -3,7 +3,7 @@ import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux';
 import * as groupsActions from '../actions/GroupActions';
 
-import { FavView } from '../components/Favs';
+
 import GroupsView from '../components/Groups';
 
 
@@ -13,21 +13,22 @@ class Groups extends Component {
     const {
       getGroups,
       leaveGroups,
-      selectGroup
+      selectGroup,
+      selectAllGroups,
+      dropGroupsSelection
     } = this.props.groupsActions;
 
     return <div>
-      <FavView
-        title="Групп в которых вы состоите:"
-        length={groups.groupslength}
-        fetching={groups.fetching}
-        fetchmessage={groups.fetchmessage}
-        completemess={groups.completemess}
-        error = {groups.error}
-        get = {getGroups}
-        del = {leaveGroups}
-      />
-    <GroupsView groupsarr={groups.groupsarr} select={selectGroup} />
+      
+    <GroupsView
+      groupsarr={groups.groupsarr}
+      selected={groups.selectedgroups}
+      get = {getGroups}
+      del = {leaveGroups}
+      select={selectGroup}
+      selectAll={selectAllGroups}
+      drop={dropGroupsSelection}
+    />
   </div>
 
   }

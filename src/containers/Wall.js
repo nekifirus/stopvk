@@ -4,29 +4,42 @@ import {connect} from 'react-redux';
 import * as wallActions from '../actions/WallActions';
 
 import { Wall as Wallcomponent } from '../components/Wall';
+import {Fetcher} from '../components/Interface';
 
 
 
 class Wall extends Component {
 
   render() {
-    const {wall} = this.props
+    const {wall} = this.props;
+    const {
+      requestWallPosts,
+      deletePosts,
+      stopWallDelete
+    } = this.props.wallActions;
 
 
 
-    return <div>
-      <Wallcomponent
-        length={wall.length}
-        trigger={wall.trigger}
-        fetching={wall.fetching}
-        fetchmessage={wall.fetchmessage}
-        completemess={wall.completemess}
-        error = {wall.error}
-        wallActions={this.props.wallActions}
-      />
+    return (
+      <div>
+        <Wallcomponent
+          posts={wall.posts}
+          trigger={wall.trigger}
+          get={requestWallPosts}
+          del={deletePosts}
 
+        />
+
+      {wall.fetching &&
+        <Fetcher
+          trigger={wall.fetching}
+          message={wall.fetchmessage}
+          percent={wall.percent}
+          cancel={stopWallDelete}
+      />}
 
       </div>
+    )
   }
 }
 

@@ -10,6 +10,7 @@ import docs from './docs';
 import videos from './videos';
 import photos from './photos';
 import downloader from './downloader';
+import captcha from './captcha';
 
 export default combineReducers({
   auth,
@@ -22,5 +23,6 @@ export default combineReducers({
   docs,
   videos,
   photos,
-  downloader
+  downloader,
+  captcha
 })

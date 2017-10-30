@@ -29,6 +29,10 @@ import {
   DL_STOP
 } from '../constants/Downloader';
 
+import {
+  CAPTCHA_NEEDED
+} from '../constants/Captcha';
+
 import jsonpRequest from '../Utils/jsonpRequest';
 import linkCreator, {executeLinkCreator} from '../Utils/linkCreator';
 import imagearrPrepare, {bestImg} from '../Utils/photoPrepare';
@@ -51,6 +55,7 @@ export function getAlbums() {
       return new Promise(function(resolve, reject) {
         getTaggetPhotos(access_token, user_id)
           .then((album) => {
+            console.log(album)
             albumsarr.splice(1, 0, album)
             return albumsarr;
           })
@@ -63,6 +68,7 @@ export function getAlbums() {
       return new Promise(function(resolve, reject) {
         getLiketPhotos(access_token)
           .then(album => {
+            console.log(album)
             albumsarr.splice(2, 0, album)
             return albumsarr;
           })
@@ -83,12 +89,11 @@ export function getAlbums() {
     jsonpRequest(requestLink)
       .then((response) => {
         let albumsarr = [];
-        albumsarr = response.items;
+        albumsarr = albumsarr.concat(response.items);
 
         albumsarr.forEach((item) => {
           item.thumb_src = bestImg(item.sizes, ["r", "q", "x", "m"]).src;
         })
-
         return albumsarr
       })
       .then(getTagget)
@@ -117,6 +122,7 @@ async function getLiketPhotos(access_token) {
     while(offset < stopvalue) {
       let code = getFavePhotos(offset);
       let url = linkCreator("execute", access_token, {code: code})
+      console.log(url)
       try {
         response = await delay(333).then(()=>jsonpRequest(url))
       } catch (e) {
@@ -133,6 +139,7 @@ async function getLiketPhotos(access_token) {
 
 
   try {
+    console.log("Fave")
     var likedphotos = await getFavewithExecute(access_token);
   } catch (e) {
     throw e;
@@ -144,7 +151,7 @@ async function getLiketPhotos(access_token) {
     id: -12,
     items: likedphotos,
     size: likedphotos.length,
-    thumb_src: bestImg(likedphotos[0].sizes, ["r", "q", "x", "m"]).src,
+    thumb_src: getCover(likedphotos),
     title: "Мне понравились"
   };
 
@@ -158,30 +165,36 @@ async function getTaggetPhotos(access_token, user_id) {
     methodname: "photos.getUserPhotos",
     targetarr: [],
     requestparams: {
-      count: 1000,
+      count: 500,
       offset: 0,
       photo_sizes: 1,
       sort: 1
     }
   }
   try {
+    console.log("try")
     var taggetphotos = await getwithOffset(params);
   } catch (e) {
     throw e
   }
+  console.log(taggetphotos)
 
   taggetphotos.forEach(item => {
     item.tagget = 1;
     item.user_id = user_id;
   });
 
+
+
   let album = {
     id: -9,
     items: taggetphotos,
     size: taggetphotos.length,
-    thumb_src: bestImg(taggetphotos[0].sizes, ["r", "q", "x", "m"]).src,
+    thumb_src: getCover(taggetphotos),
     title: "Фотографии со мной"
   }
+
+  console.log(album)
 
   return album;
 }
@@ -412,11 +425,21 @@ function failDelete(err) {
   return {type: PHOTOALBUM_DELFAIL, payload: err}
 }
 
+function captchaneeded (img, sid, func) {
+
+  return {
+    type: CAPTCHA_NEEDED,
+    img: img,
+    sid: sid,
+    func: func
+  }
+}
 
 
 
 
-export function delAlbums() {
+
+export function delAlbums(dispatch, getState) {
   return function(dispatch, getState) {
 
     const
@@ -434,6 +457,8 @@ export function delAlbums() {
 
     dispatch(startDelete());
 
+    var initiallength = albumstodelete.length;
+
 
     deleteAlbums(albumstodelete, access_token, progress)
       .then(() => {
@@ -445,7 +470,21 @@ export function delAlbums() {
           let idx = photoalbums.indexOf(album);
           photoalbums.splice(idx, 1);
         })
-        dispatch((stopDelete(photoalbums, Number(albumstodelete) - Number(err.deleted))));
+        let idx = photoalbums.indexOf(err.album);
+        photoalbums[idx] = err.album;
+
+        let sel = initiallength - err.deleted.length;
+        console.log("a", albumstodelete.length, "b", err.deleted.length, "c", sel)
+
+        dispatch((stopDelete(photoalbums, sel)));
+
+        console.log(err.error)
+        console.log(err)
+        if (err.error.error_code === 14) {
+          let img = err.error.captcha_img;
+          let sid = err.error.captcha_sid;
+          dispatch(captchaneeded(img, sid, delAlbums))
+        }
         dispatch(failDelete(err.error))
       })
   }
@@ -460,7 +499,20 @@ async function deleteAlbums(albums, access_token, onUpdate) {
     let album = albums.pop();
     try {
       let images = await getAlbumItems(album, access_token);
-      if (images.length) await deleteImages(images, access_token);
+      if (images.length) {
+        try {
+          await deleteImages(images, access_token);
+        } catch (e) {
+          e.deleted.forEach(image => {
+            let idx = images.indexOf(image);
+            images.splice(idx, 1);
+          })
+          album.items = images;
+          album.size = images.length;
+          throw e.error;
+        }
+      }
+
       if (album.id === (-6 || -7 || -15 || -9 || -12)) throw new Error("System");
       let url = linkCreator("photos.deleteAlbum",
                     access_token, {album_id: album.id})
@@ -471,12 +523,13 @@ async function deleteAlbums(albums, access_token, onUpdate) {
       } else {
         let err = {
           error: e,
-          deleted: deleted
+          deleted: deleted,
+          album: album
         }
         throw err;
       }
     }
-    deleted.push(album);
+    deleted.concat(album);
     if (typeof onUpdate === "function") {
       onUpdate(Math.floor(100 - albums.length/initiallength*100));
     }
@@ -509,7 +562,7 @@ export function delSelectedInAlbum(){
 
     dispatch(startDelete());
 
-    deleteImages(imagestoDelete, access_token, progress)
+    deleteImages(imagestoDelete, access_token, progress, dispatch)
       .then(() => {
         album.items = imagesToSave;
         album.size = album.items.length;
@@ -525,7 +578,12 @@ export function delSelectedInAlbum(){
         album.size = album.items.length;
         photoalbums.splice(album_index, 1, album);
         dispatch(stopDelete(photoalbums, selectedalbums))
-        dispatch(failDelete(err.error))
+        if (err.error.error_code === 14) {
+          let img = err.error.captcha_img;
+          let sid = err.error.captcha_sid;
+          dispatch(captchaneeded(img, sid, delSelectedInAlbum))
+        }
+        dispatch(failDelete(err.error.message))
       })
 
   }
@@ -561,7 +619,7 @@ async function deleteImages(items, access_token, onUpdate) {
       console.log(err)
       throw err;
     }
-    deleted.push(todel);
+    deleted.concat(todel);
     if (typeof onUpdate === "function") {
       onUpdate(Math.floor(100 - items.length/initiallength*100));
     }
@@ -593,7 +651,7 @@ async function unTagPhotos(items, access_token, onUpdate) {
       console.log(err)
       throw err;
     }
-    deleted.push(todel);
+    deleted.concat(todel);
     if (typeof onUpdate === "function") {
       onUpdate(Math.floor(100 - items.length/initiallength*100));
     }
@@ -604,7 +662,7 @@ async function unTagPhotos(items, access_token, onUpdate) {
 
 async function unLikePhotos(items, access_token, onUpdate) {
 
-  const count = 2, initiallength = items.length;
+  const count = 10, initiallength = items.length;
   var deleted = [];
 
   while(items.length) {
@@ -615,16 +673,18 @@ async function unLikePhotos(items, access_token, onUpdate) {
       access_token
     );
     try {
-      await delay(333).then(()=>jsonpRequest(url));
+      await delay(777).then(()=>jsonpRequest(url));
     } catch (e) {
       var err = {
         deleted: deleted,
-        error: e
+        error: e,
+        func: unLikePhotos,
+        items: items
       };
       console.log(err)
       throw err;
     }
-    deleted.push(todel);
+    deleted.concat(todel);
     if (typeof onUpdate === "function") {
       onUpdate(Math.floor(100 - items.length/initiallength*100));
     }
@@ -714,7 +774,7 @@ export function saveSelectedImagesInAlbum() {
 
 function savecurrentAlbum(album, dispatch, access_token) {
   return new Promise(function(resolve, reject) {
-    var imagestosave = [];
+
 
     getAlbumItems(album, access_token)
       .then((items) => {
@@ -722,7 +782,7 @@ function savecurrentAlbum(album, dispatch, access_token) {
         return preparePhotosToView(items);
       })
       .then((items) => {
-        resolve(downloadAsZip(imagestosave, album.title, dispatch))
+        resolve(downloadAsZip(items, album.title, dispatch))
       })
       .catch((err) => {
         err = JSON.stringify(err);
@@ -805,4 +865,13 @@ function getSelected(arr, bool) {
     if (!!item.isSelected === bool) resqarr.push(item)
   })
   return resqarr;
+}
+
+
+function getCover(photos) {
+  if (!photos.length) {
+    return ("https://vk.com/images/x_noalbum.png");
+    } else {
+      return (bestImg(photos[0].sizes, ["r", "q", "x", "m"]).src)
+    }
 }

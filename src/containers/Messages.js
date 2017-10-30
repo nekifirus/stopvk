@@ -3,29 +3,37 @@ import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux';
 import * as messActions from '../actions/MessActions';
 
-import { FavView } from '../components/Favs';
+import {Fetcher} from '../components/Interface';
 
+import { FavView } from '../components/Favs';
 
 class Mess extends Component {
   render() {
     const {mess} = this.props;
     const {
-      getMessages,
+      initMessages,
       delMessages
     } = this.props.messActions;
 
-    return <div>
-      <FavView
-        title="Личных сообщений:"
-        length={mess.messageslength}
-        fetching={mess.fetching}
-        fetchmessage={mess.fetchmessage}
-        completemess={mess.completemess}
-        error = {mess.error}
-        get = {getMessages}
-        del = {delMessages}
-      />
-  </div>
+    return (
+      <div className="box">
+        <FavView
+          title="Диалогов:"
+          arr={mess.dialogsarr}
+          get = {initMessages}
+          del = {delMessages}
+        />
+
+        {mess.fetching &&
+             <Fetcher trigger={mess.fetching}
+                      message={mess.fetchmessage}
+                      percent={mess.percent}
+               />
+          }
+      </div>
+
+    )
+
 
   }
 }

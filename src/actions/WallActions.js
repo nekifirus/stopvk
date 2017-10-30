@@ -12,133 +12,138 @@ import {
   WALLDELL_SUCCESS
 } from '../constants/Wall';
 
-import jsonp from 'jsonp';
-import arrPrepare from '../Utils/arrPrepare';
+import {getwithOffset} from '../Utils/Requester';
+import {executeLinkCreator} from '../Utils/linkCreator';
+import delay from '../Utils/Delay';
+import jsonpRequest from '../Utils/jsonpRequest';
+import {apiDelPosts} from '../Utils/APImethods';
 
 export function stopWallDelete() {
   return { type: WALLDELL_STOP };
 };
 
-export function startWallDelete() {
-  return function(dispatch, getState) {
-    const state = getState();
-    const access_token = state.auth.access_token;
-    var posts = state.wall.posts;
-
-
-    dispatch({type: WALLDELL_START});
-
-    deleteWallPosts(access_token, posts, getState, dispatch);
-  };
-};
-
-
-function deleteWallPosts (access_token, posts, getState, dispatch) {
-  const state = getState();
-  var trigger = state.wall.trigger;
-  var count = 3; //сколько удалять за проход.
-  var postsToDelete; //переменная для хранения постов для удаления за проход
-
-  //функция подготовки постов для удаления
-  //берет 3 последних записи на стене - возвращает строку id записей
-  //ВК массивы не берет аргументами, только строки(
-
-  //реализация кнопки Стоп. Если триггер false то возврат
-  if (!trigger) return;
-  //второе условие - если массив постов пуст - возврат
-  if (!posts.length) return dispatch({type: WALLDELL_SUCCESS});
-
-
-  //берем строчку с id постов
-  postsToDelete = arrPrepare(posts, count);
-  //делаем запрос
-  jsonp(`https://api.vk.com/method/execute.wallposts_delete?access_token=${access_token}&count=${count}&posts=${postsToDelete}&v=5.68`,
-   function(err, data) {
-     if (err) dispatch({
-         type: WALLDELL_ERROR,
-         payload: err
-         });
-     if (data) {
-       //сообщаем что удалили посты и оставшееся количество на стене
-       dispatch ({
-         type: WALLDELL_WORK,
-         payload: posts.length
-       });
-       //ну и чтобы не забанили через таймаут вызываем текущую функцию опять
-       setTimeout(function() {
-        deleteWallPosts(access_token, posts, getState, dispatch);
-       }, 333);
-     }; //if data
-   } // function(err, data)
-  ); //jsonp
-} // function deleteWallPosts
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-export function requestWallPosts() {
+export function deletePosts() {
   return function(dispatch, getState) {
 
-    const state = getState();
-    const owner_id = state.auth.user_id;
-    const access_token = state.auth.access_token;
+    function progress(percent) {
+      dispatch({
+        type: WALLDELL_WORK,
+        payload: percent
+      })
+    }
+
+    const
+      state = getState(),
+      access_token = state.auth.access_token;
 
     var
-      offset = 0,
-      postscount = 1,
-      postlist = [];
+      posts = state.wall.posts,
+      savedposts = [...posts];
+
+    dispatch({type: WALLDELL_START})
+
+    deleteWallPosts(posts, access_token, progress, getState)
+      .then(() => {
+        dispatch({
+          type: WALLDELL_SUCCESS,
+          payload: []
+        });
+        (requestWallPosts())(dispatch, getState);
+      })
+      .catch((err) => {
+        err.deleted.forEach(post => {
+          let idx = savedposts.indexOf(post);
+          savedposts.splice(idx, 1)
+        })
+        dispatch({type: WALLDELL_SUCCESS, payload: savedposts});
+        dispatch({type: WALLDELL_ERROR, payload: err.error});
+      })
+  }
+}
+
+async function deleteWallPosts(items, access_token, onUpdate, getState) {
+  const count = 10, initiallength = items.length;
+  var deleted = [];
+
+  while(items.length) {
+
+    let state = getState();
+    if(!state.wall.trigger) {
+      let err = {
+        deleted: deleted,
+        error: new Error("Stopped")
+      };
+      throw err;
+    }
+
+    let todel = items.splice(-count);
+
+    let url = executeLinkCreator(
+      todel.map(item => apiDelPosts(item.id)),
+      access_token
+    );
+    try {
+      await delay(333).then(()=>jsonpRequest(url));
+    } catch (e) {
+      let err = {
+        deleted: deleted,
+        error: e
+      };
+      console.log(err)
+      throw err;
+    }
+    deleted = deleted.concat(todel);
+    if (typeof onUpdate === "function") {
+      onUpdate(Math.floor(100 - items.length/initiallength*100));
+    }
+  }
+
+  return deleted;
+}
 
 
 
-    function requestCycle(offset, postscount) {
-      if (offset > postscount) return dispatch({
+
+
+export function requestWallPosts(){
+  return function(dispatch, getState) {
+
+    function progress(percent) {
+      dispatch({
+        type: WALLINDEX_REQUEST,
+        payload: percent
+      })
+    }
+
+    const
+     state = getState();
+
+    var params = {
+      access_token: state.auth.access_token,
+      methodname: "wall.get",
+      targetarr: [],
+      requestparams: {
+        count: 100,
+        offset: 0
+      }
+    }
+
+    getwithOffset(params, progress)
+      .then(posts => {
+        dispatch({
           type: WALLINDEX_SUCCESS,
-          payload: postlist
-        });
-
-      jsonp(`https://api.vk.com/method/execute.wallposts_get?access_token=${access_token}&owner_id=${owner_id}&offset=${offset}&v=5.68`,
-        function(err, data) {
-          if (err) {
-            dispatch({
-              type: WALLINDEX_FAIL,
-              payload: err
-            });
-          };
-          if (data) {
-            offset = data.response[0];
-            postscount = data.response[1];
-            postlist = postlist.concat(data.response[2]);
-            dispatch({
-              type: WALLINDEX_REQUEST,
-              payload: postlist.length
-            });
-            setTimeout(function() {
-              requestCycle(offset, postscount)
-            }, 333);
-          };
-        });
-    };
-
-
-    dispatch({
-      type: WALLINDEX_REQUEST
-    });
-    requestCycle(offset, postscount);
-
-
+          payload: posts
+        })
+      })
+      .catch(e => {
+        dispatch({
+          type: WALLINDEX_FAIL,
+          payload: e.toString()
+        })
+      })
 
   }
-};
+}

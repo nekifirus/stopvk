@@ -1,73 +1,89 @@
 import React from 'react';
-import '../stylesheets/Groups.css';
 
+
+import {
+  GroupButtons,
+  SelectedIco,
+  Counters
+} from './Interface';
 
 
 
 export default class GroupsView extends React.Component {
-
+  componentDidMount() {
+    this.props.get()
+  }
 
   onSelectGroup (value, idx) {
 
-        console.log(value)
         this.props.select.call(this, value, idx);
     }
 
 
   render() {
     const {
-      groupsarr
+      groupsarr,
+      selected,
+      selectAll,
+      drop,
+      del
     } = this.props;
 
     const GroupType = (props) => {
       switch(props.type) {
         case "group":
-          return <tag className="tag is-light is-rounded">Группа</tag>
+          return (<span>Группа</span>);
         case "page":
-          return <tag className="tag is-light is-rounded">Страница</tag>
+          return (<span>Страница</span>);
         case "event":
-         return <tag className="tag is-light is-rounded">Мероприятие</tag>
+         return (<span>Мероприятие</span>);
         default:
-          return <tag className="tag is-light is-rounded">Группа</tag>
+          return (<span>Группа</span>);
       }
     }
 
-    const Groupcard = (props) =>  <div className="field">
-      <div className={props.value.isSelected ? "card selected" : "card"}
-                                    onClick={this.onSelectGroup.bind(this, props.value, props.idx)}>
-        <div className="card-image">
-          <img src={props.value.photo_200} className="image" alt="" />
-              <div className={props.value.isSelected ? "select-ico fa-3x" : "is-invisible"}>
-                <i className="fa fa-circle fa-stack-1x" aria-hidden="true"></i>
-                <i className="fa fa-check-circle fa-inverse fa-stack-1x" aria-hidden="true"></i>
-             </div>
-            <div className="tagsfield">
-              <GroupType type={props.value.type} />
+    const Groupcard = ({group, idx}) =>  (
+      <div className="box album-card"
+        onClick={this.onSelectGroup.bind(this, group, idx)}>
 
-              {props.value.is_closed ? <tag className="tag is-info is-rounded">Закрытая</tag> : ''}
-              {props.value.is_admin ? <tag className="tag is-danger is-rounded">Вы админ</tag> : ''}
-            </div>
-        </div>
-        <div className="card-content has-text-centered">
+        <div className="album-cover">
+          <img src={group.photo_200} className="image" alt={group.title} />
 
-          <div>
-            <p><a href={"https://vk.com/" + props.value.screen_name} target="_blank" rel="noopener noreferrer">{props.value.name}</a></p>
+          <div className="album-count">
+            <GroupType type={group.type} />
           </div>
 
+          <div className="album-title has-text-centered">
+          <a href={"https://vk.com/" + group.screen_name} target="_blank" rel="noopener noreferrer">{group.name}</a>
+          <br />
 
+            {group.is_closed ? <tag className="tag is-info is-rounded">Закрытая</tag> : ''}
+            {group.is_admin ? <tag className="tag is-danger is-rounded">Вы админ</tag> : ''}
+          </div>
+        <SelectedIco trigger={group.isSelected} />
+        </div>
+
+
+      </div>
+    );
+
+
+
+
+    const GroupsCardArr = groupsarr.map((group, index) => (
+      <Groupcard key={group.id} group={group} idx={index} />
+    ));
+
+    return (
+      <div className="box">
+        <Counters all={groupsarr.length} selected={selected} />
+        <GroupButtons selectAll={selectAll} drop={drop} del={del} />
+
+        <div className="albums-group">
+          {GroupsCardArr}
         </div>
       </div>
-    </div>
+    )
 
-
-    const GroupsCardArr = groupsarr.map((group, index) => <Groupcard
-                                                            key={group.id}
-                                                            value={group}
-                                                            idx={index}
-                                                            />)
-
-    return <div className="card-group">
-      {GroupsCardArr}
-    </div>
   }
 }

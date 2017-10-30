@@ -11,7 +11,7 @@ import {
 
 
 const initialState = {
-  length: '',
+  percent: 0,
   posts: '',
   //что касается момента загрузки
   fetching: false,
@@ -19,7 +19,6 @@ const initialState = {
   //остановка удаления
   trigger: '',
   //когда все закончилось
-  completemess: '',
   error: ''
 };
 
@@ -31,7 +30,7 @@ export default function wall(state=initialState, action) {
     case WALLINDEX_REQUEST:
       return { ...state,
         fetching: true,
-        fetchmessage: "Получаю посты из ВК" };
+        percent: action.payload };
 
     case WALLINDEX_FAIL:
       return { ...state, error: action.payload, fetching: false };
@@ -39,7 +38,6 @@ export default function wall(state=initialState, action) {
     case WALLINDEX_SUCCESS:
       return { ...state,
         posts: action.payload,
-        length: action.payload.length,
         fetching: false
       };
 
@@ -52,12 +50,12 @@ export default function wall(state=initialState, action) {
         fetchmessage: "Удаляю посты со стены"
       };
     case WALLDELL_WORK:
-      return { ...state, length: action.payload };
+      return { ...state, percent: action.payload };
     case WALLDELL_STOP:
       return { ...state, trigger: false, fetching: false };
     case WALLDELL_SUCCESS:
       return { ...state, trigger: false, fetching: false,
-        completemess: 'На стене больше нет постов'
+        posts: action.payload
       };
     case WALLDELL_ERROR:
       return { ...state, fetching: false, trigger: false,

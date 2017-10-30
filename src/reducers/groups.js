@@ -14,7 +14,8 @@ import {
 
 const initialState = {
   groupsarr: [],
-  groupslength: '',
+  selectedgroups: 0,
+  percent: '',
 
   fetching: false,
   fetchmessage: '',
@@ -27,25 +28,23 @@ export default function groups(state = initialState, action) {
 
   switch(action.type) {
     case GROUPS_REQUEST:
-      return {...state, fetching: true, fetchmessage: 'Получаю список групп',
-              groupslength: action.payload };
+      return {...state, fetching: true, fetchmessage: 'Получаю список групп', percent: action.percent};
     case GROUPS_SUCCESS:
-      return {...state, error: '', fetching: false, groupsarr: action.payload,
-              groupslength: action.payload.length };
+      return {...state, error: '', fetching: false, groupsarr: action.payload };
     case GROUPS_FAIL:
       return {...state, fetching: false, error: action.payload };
 
 
     case GROUPS_SELECT:
-      return {...state, groupsarr: action.payload };
+      return {...state, groupsarr: action.payload, selectedgroups: action.selectedgroups };
 
 
     case GROUPSDEL_REQUEST:
       return {...state, fetching: true, fetchmessage: 'Выхожу из групп',
-              groupslength: action.payload };
+              percent: action.percent };
 
     case GROUPSDEL_SUCCESS:
-      return {...state, fetchin: false, completemess: 'Вышел из групп'};
+      return {...state, fetching: false, groupsarr: action.payload, selectedgroups: action.selectedgroups };
 
     case GROUPSDEL_FAIL:
       return {...state, fetching: false, error: action.payload };

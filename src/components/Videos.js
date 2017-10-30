@@ -1,12 +1,22 @@
 import React from 'react';
 
-
+import {
+  GroupButtons,
+  SelectedIco,
+  Counters,
+  TitleButtonsGroup
+} from './Interface';
 
 export default class VideosView extends React.Component {
+  componentDidMount() {
+    this.props.get()
+  }
+
+
   onSelectVideo (video, index) {
         this.props.select.call(this, video, index);
   }
-  onClickVideo (video) {
+  onPlayVideo (video) {
         this.props.showVideo.call(this, video);
   }
   onCloseVideo() {
@@ -14,53 +24,46 @@ export default class VideosView extends React.Component {
   }
   render() {
 
-    const { videosarr, video, show, selectAll } = this.props;
+    const { videosarr, selected, video, show, selectAll, drop, del, } = this.props;
 
 
 
-    const VideoCard = (({video, index}) => <div
-        className={video.isSelected ? "card selected" : "card"}  key={video.id.toString()}
-        onClick={this.onSelectVideo.bind(this, video, index)}>
+    const VideoCard = (({video, index}) => (
+      <div className="box album-card">
+        <div className="album-cover">
 
-        <div className="card-image">
           <img className="image" src={video.photo_320 || video.photo_130} alt={video.title}/>
-          <div className={video.isSelected ? "select-ico fa-3x" : "is-invisible"}>
-              <i className="fa fa-circle fa-stack-1x" aria-hidden="true"></i>
-              <i className="fa fa-check-circle fa-inverse fa-stack-1x" aria-hidden="true"></i>
+
+          <div className="album-title has-text-centered">
+              {video.title}
+              <TitleButtonsGroup
+                check={this.onSelectVideo.bind(this, video, index)}
+                play={this.onPlayVideo.bind(this, video, index)}
+              />
           </div>
-          <div className="play-button">
-            <i className="fa fa-5x fa-youtube-play" aria-hidden="true"
-              onClick={this.onClickVideo.bind(this, video)}></i>
-          </div>
-
-
-        </div>
-        <div className="card-content">
-          <h3>{video.title}</h3>
-
+          <SelectedIco trigger={video.isSelected} />
         </div>
 
-    </div>
-
-    );
-
-    const VideosGroup = videosarr.map((video, index) => <VideoCard video={video} index={index} />
-      );
+      </div>
+    ));
 
 
 
-
+    const VideosGroup = videosarr.map((video, index) => (
+      <VideoCard key ={video.id} video={video} index={index} />
+    ));
 
 
 
     return(
-      <div>
-        <button type="button" className="button is-primary"
-                onClick={selectAll}>Выделить все</button>
+      <div className="box">
+        <Counters all={videosarr.length} selected={selected}/>
+        <GroupButtons selectAll={selectAll} drop={drop} del={del} />
 
-        <div className="card-group">
+        <div className="albums-group">
               {VideosGroup}
         </div>
+
         <div className={show ? "modal is-active" : "modal"}>
           <div className="modal-background" onClick={this.onCloseVideo.bind(this)}></div>
           <div className="modal-card">
@@ -74,6 +77,4 @@ export default class VideosView extends React.Component {
 
     )
   }
-
-
 }

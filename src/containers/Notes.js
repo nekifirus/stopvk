@@ -3,7 +3,7 @@ import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux';
 import * as notesActions from '../actions/NotesActions';
 
-import { FavView } from '../components/Favs';
+import {Fetcher} from '../components/Interface';
 import NotesView from '../components/Notes';
 
 
@@ -15,26 +15,31 @@ class Notes extends Component {
       getNotes,
       delNotes,
       selectNote,
-      selectAllNotes
+      selectAllNotes,
+      dropNotesSelection
     } = this.props.notesActions;
 
     return <div>
-      <FavView
-        title="У вас заметок:"
-        length={notes.noteslength}
-        fetching={notes.fetching}
-        fetchmessage={notes.fetchmessage}
-        completemess={notes.completemess}
-        error = {notes.error}
-        get = {getNotes}
-        del = {delNotes}
-      />
 
     <NotesView notesarr={notes.notesarr}
-                 select={selectNote}
-                 selectAll={selectAllNotes} />
+               selected={notes.selectednotes}
+               get = {getNotes}
+               del = {delNotes}
+               select={selectNote}
+               selectAll={selectAllNotes}
+               drop={dropNotesSelection}
+      />
+
+      {notes.fetching &&
+           <Fetcher trigger={notes.fetching}
+                    message={notes.fetchmessage}
+
+             />
+        }
 
   </div>
+
+
 
   }
 }

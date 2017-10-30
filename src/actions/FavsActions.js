@@ -60,10 +60,7 @@ import {
 
 
   //captcha
-  CAPTCHA_NEEDED,
-  CAPTCHA_SET,
-  CAPTCHA_CANCEL,
-  CAPTCHA_SUBMITED
+  CAPTCHA_NEEDED
 
 } from '../constants/Favs';
 
@@ -610,7 +607,7 @@ export function selectFavPhoto(index, image) {
   return function(dispatch, getState) {
     const state = getState();
     var photoarr = state.favs.photoarr;
-    
+
     image.isSelected = !image.isSelected;
     photoarr.splice(index, 1, image);
 
@@ -671,28 +668,3 @@ export function favedelPhotos(){
 }
 
 /////////////////CAPTCHA/////////////////
-
-export function setCaptcha(captcha_key) {
-  return { type: CAPTCHA_SET, payload: captcha_key };
-};
-
-export function cancelCaptcha(){
-  return { type: CAPTCHA_CANCEL };
-};
-
-export function submitCaptcha() {
-  return function(dispatch, getState) {
-    const state = getState();
-    var params = state.favs.captcha_params;
-
-    params.captcha_sid = state.favs.captcha_sid;
-    params.captcha_key = state.favs.captcha_key;
-
-    dispatch({
-      type: CAPTCHA_SUBMITED
-    });
-
-    unLike(params, dispatch);
-
-  };
-};

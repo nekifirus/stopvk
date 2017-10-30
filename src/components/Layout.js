@@ -12,6 +12,7 @@ export default class Layout extends Component {
           <div className="navbar-brand">
             <Link to="/" className="navbar-item is-large">StopVK</Link>
           </div>
+          <Link to="/auth">Авторизация</Link>
         </div>
 
 

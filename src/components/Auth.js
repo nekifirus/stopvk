@@ -23,9 +23,11 @@ export default class Authform extends Component {
       isValid,
       error,
       link
-    } = this.props.auth
+    } = this.props.auth;
 
-    const authlink = 'https://oauth.vk.com/authorize?client_id=6151047&display=page&redirect_uri=https://oauth.vk.com/blank.html&scope=friends,photos,audio,video,pages,notes,messages,wall,docs,groups,offline&response_type=token&v=5.68&state=123456'
+    
+
+    const authlink = 'https://oauth.vk.com/authorize?client_id=6244835&display=page&redirect_uri=https://oauth.vk.com/blank.html&scope=friends,photos,audio,video,pages,notes,messages,wall,docs,groups&response_type=token&v=5.68&state=123456'
   return <div className="hero container has-text-centered">
     <div className="hero-body">
       <h2 className="title">Авторизация</h2>
@@ -33,6 +35,8 @@ export default class Authform extends Component {
       <p>Нажмите на ссылку ниже. Откроется новая вкладка. Скопируйте все из адресной строки в открывшейся вкладке и вставьте в поле ниже</p>
       <br />
       <p><a className="button is-info" href={authlink} target="_blank">ЖМИ</a></p>
+
+
     </div>
 
 

@@ -34,6 +34,57 @@ return {count: count, resp1: resp1, resp2: resp2, resp3: resp3, resp4: resp4, re
 
 export function apiUnLike(type, owner_id, item_id) {
   return `
-    API.likes.delete({"type": ${type}, "owner_id": ${owner_id}, "item_id": ${item_id}});
+    API.likes.delete({"type": "${type}", "owner_id": ${owner_id}, "item_id": ${item_id}});
   `;
+}
+
+export function apiUnFriend(friend) {
+  return `
+    API.friends.delete({"user_id":${friend.id}});
+  `
+}
+
+export function apiDelVideo(video) {
+  return `
+    API.video.delete({"video_id": ${video.id}});
+  `
+}
+
+export function apiDelDocs(doc) {
+  return `
+    API.docs.delete({"owner_id": ${doc.owner_id}, "doc_id": ${doc.id}});
+  `
+}
+
+export function apiLeaveGroups(group) {
+  return `
+    API.groups.leave({"group_id": ${group.id}});
+  `
+}
+
+export function apiDelNotes(note) {
+  return `
+    API.notes.delete({"note_id": ${note.id}});
+  `
+}
+
+
+export function apiDelPosts(id) {
+  return `
+    API.wall.delete({"post_id": ${id}});
+  `
+}
+
+
+export function apiDelMessages(dialog) {
+  let code;
+  if (dialog.id > 2000000000) {
+    code = `
+      API.messages.removeChatUser({"chat_id": ${dialog.id - 2000000000}, "user_id":${dialog.user_id}});
+      API.messages.deleteDialog({"peer_id": ${dialog.id}});
+    `
+  } else {
+    code = `API.messages.deleteDialog({"user_id": ${dialog.id}});`
+  }
+  return code;
 }

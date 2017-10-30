@@ -18,9 +18,10 @@ class App extends Component {
 
 
     return <div className="columns">
-      <div className="column is-3">
-        <User info={info}/>
-        <Menu />
+      <div className="column box is-3">
+
+          <Menu />
+
       </div>
       <div className="column is-paddingless">
         {this.props.children}

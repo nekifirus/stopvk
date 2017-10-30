@@ -14,6 +14,34 @@ var auth = {
   'expires_in': ''
 }
 
+export function autorize() {
+  return function(dispatch) {
+
+    async function authrequest() {
+      return new Promise(function(resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "http:localhost:8080/" + url);
+        xhr.onerror = function() {reject("Network error.")};
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+              console.log(xhr.response)
+              resolve(xhr.response)
+            }
+            else {reject("Loading error:" + xhr.statusText)}
+        };
+        xhr.send();
+      });
+    }
+
+  let url = "https://oauth.vk.com/authorize?client_id=6151047&display=page&redirect_uri=https://oauth.vk.com/blank.html&scope=friends,photos,audio,video,pages,notes,messages,wall,docs,groups,offline&response_type=token&v=5.68&state=123456"
+
+  authrequest()
+    .then(resp => dispatch({type: AUTHLINK_SUCCESS, payload:resp}))
+    .catch(err => dispatch({type: AUTHLINK_FAIL, payload: err}))
+
+  }
+}
+
 export function getUserInfo(dispatch, getState) {
 
   const state = getState()
@@ -45,11 +73,11 @@ function checkLink(link) {
   let
     a = ~link.indexOf('user_id'),
     b = ~link.indexOf('access_token'),
-    c = ~link.indexOf('expires_in'),
-    d = link.length === 172
+    c = ~link.indexOf('expires_in');
 
 
-  return (a) && (b) && (c) && (d)
+
+  return (a) && (b) && (c)
 }
 
 export function setLink(link) {
@@ -86,6 +114,8 @@ export function pushLink(link) {
       for (var name in auth) {
         auth[name] = mega(name)
       }
+
+      
 
       dispatch({type: AUTHLINK_PUSH, auth})
 

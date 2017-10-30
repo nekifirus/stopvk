@@ -10,26 +10,11 @@ import {
   GROUPSDEL_FAIL
 } from '../constants/Groups';
 
-import jsonpRequest from '../Utils/jsonpRequest';
-import linkCreator from '../Utils/linkCreator';
-
-export function selectGroup (item, index) {
-  return function(dispatch, getState) {
-    const state = getState();
-    var
-      groupsarr = state.groups.groupsarr;
-
-    item.isSelected = !item.isSelected;
-    groupsarr.splice(index, 1, item);
-
-    dispatch({
-      type: GROUPS_SELECT,
-      payload: groupsarr
-    })
 
 
-  }
-}
+import {getwithOffset, deleteWithExecute} from '../Utils/Requester';
+import {apiLeaveGroups} from '../Utils/APImethods';
+
 
 
 export function getGroups() {
@@ -38,117 +23,172 @@ export function getGroups() {
       state = getState(),
       params = {
           access_token: state.auth.access_token,
-          methodname: 'execute.getGroups',
-          groupsarr: [],
-          linkparams: {
+          methodname: 'groups.get',
+          targetarr: [],
+          requestparams: {
             offset: 0,
             count: 500,
+            extended: 1
           }
       };
 
-    dispatch({
-      type: GROUPS_REQUEST
-    })
-    getGroupsRequest(params);
-
-
-    function getGroupsRequest(params) {
-      var requestLink = linkCreator(params.methodname,
-                                    params.access_token,
-                                    params.linkparams);
+    function groupReqProgress(percent) {
       dispatch({
         type: GROUPS_REQUEST,
-        payload: params.groupsarr.length
+        percent: percent
       })
-
-      jsonpRequest(requestLink)
-        .then((response) => {
-          console.log(response)
-
-          params.groupsarr = params.groupsarr.concat(response.items);
-          params.linkparams.offset += response.items.length;
-          console.log(params.groupsarr, params.linkparams.offset)
-          if(params.linkparams.offset >= response.count) {
-            dispatch({
-              type: GROUPS_SUCCESS,
-              payload: params.groupsarr
-            })
-          } else {
-            setTimeout(function() {
-              getGroupsRequest(params)
-            }, 333);
-          }
-        })
-        .catch((err) => {
-          err = JSON.stringify(err);
-          return dispatch({
-            type: GROUPS_FAIL,
-            payload: err
-          });
-        })
-
     }
+
+    groupReqProgress(0);
+
+    getwithOffset(params, groupReqProgress)
+      .then(groupsarr => {
+        dispatch({
+          type: GROUPS_SUCCESS,
+          payload: groupsarr
+        })
+      })
+      .catch(err => {
+        dispatch({
+          type: GROUPS_FAIL,
+          payload: err.toString()
+        })
+      })
+  }
+}
+
+
+
+export function leaveGroups() {
+  return function(dispatch, getState) {
+
+    function groupsdelProgress(percent) {
+      dispatch({
+        type: GROUPSDEL_REQUEST,
+        payload: percent
+      })
+    }
+
+    const
+      state = getState(),
+      access_token = state.auth.access_token;
+
+    var
+      groupsarr = state.groups.groupsarr,
+      groupsToDelete = [], groupsToSave = [];
+      groupsarr.forEach((group) => {
+        if(group.isSelected) {
+          groupsToDelete.push(group);
+        } else {
+          groupsToSave.push(group)
+        }
+      });
+
+      groupsdelProgress(0);
+
+      deleteWithExecute(groupsToDelete, access_token, apiLeaveGroups, groupsdelProgress)
+        .then(() => {
+          dispatch({
+            type: GROUPSDEL_SUCCESS,
+            payload: groupsToSave,
+            selecteddocs: 0
+          })
+        })
+        .catch(err => {
+          err.deleted.forEach(group => {
+            let idx = groupsarr.indexOf(group);
+            groupsarr.splice(idx, 1)
+          })
+          dispatch({
+            type: GROUPSDEL_SUCCESS,
+            payload: groupsarr,
+            selectedgroups: (groupsToDelete.length - err.deleted.length)
+          });
+          dispatch({
+            type: GROUPSDEL_FAIL,
+            payload: JSON.stringify(err.error)
+          })
+        })
+
   }
 }
 
 
 
 
-export function leaveGroups () {
-  return function (dispatch, getState) {
-    const
-      state = getState(),
-      count = 5;
-    var  params = {
-        access_token: state.auth.access_token,
-        methodname: 'execute.groupsLeave',
-        groupsarr: []
-      };
 
-    state.groups.groupsarr.forEach((item) => {
-      if (!item.isSelected) params.groupsarr.push(item.id);
-    })
 
+
+
+
+
+
+
+
+
+
+/////SELECT/////////
+
+
+export function selectGroup (item, index) {
+  return function(dispatch, getState) {
+    const state = getState();
+    var
+      groupsarr = state.groups.groupsarr,
+      selectedgroups = state.groups.selectedgroups;
+
+    item.isSelected = !item.isSelected;
+    groupsarr.splice(index, 1, item);
+
+    if (item.isSelected) {
+      selectedgroups += 1;
+    } else {
+      selectedgroups -= 1;
+    }
 
     dispatch({
-      type: GROUPSDEL_REQUEST,
-      payload: params.groupsarr.length
-    });
+      type: GROUPS_SELECT,
+      payload: groupsarr,
+      selectedgroups: selectedgroups
+    })
+  }
+}
 
-    leaveGroupsRequest(params);
+export function selectAllGroups () {
+  return function(dispatch, getState) {
+    const state = getState();
+    var
+      groupsarr = state.groups.groupsarr;
 
-    function leaveGroupsRequest(params) {
-      if (!params.groupsarr.length) return dispatch({type: GROUPSDEL_SUCCESS})
+    groupsarr.forEach(group => {
+      group.isSelected = true;
+    })
 
-      var groupstoLeave = params.groupsarr.splice(-count, count).join();
-      console.log(groupstoLeave)
-      var requestLink = linkCreator(params.methodname, params.access_token,
-                                    {group_ids: groupstoLeave});
-      dispatch({
-        type: GROUPSDEL_REQUEST,
-        payload: params.groupsarr.length
-      });
+    dispatch({
+      type: GROUPS_SELECT,
+      payload: groupsarr,
+      selectedgroups: groupsarr.length
+    })
 
-      jsonpRequest(requestLink)
-        .then((response) => {
-          console.log(response)
-          dispatch({
-            type: GROUPSDEL_REQUEST,
-            payload: params.groupsarr.length
-          });
-          setTimeout(function() {
-            leaveGroupsRequest(params)
-          }, 333);
-        })
-        .catch((err) => {
-          err = JSON.stringify(err);
-          return dispatch({
-            type: GROUPSDEL_FAIL,
-            payload: err
-          });
-        })
+  }
+}
 
-    }
+
+export function dropGroupsSelection () {
+  return function(dispatch, getState) {
+    const state = getState();
+    var
+      groupsarr = state.groups.groupsarr;
+
+    groupsarr.forEach(group => {
+      group.isSelected = false;
+    })
+
+    dispatch({
+      type: GROUPS_SELECT,
+      payload: groupsarr,
+      selectedgroups: 0
+    })
 
   }
 }

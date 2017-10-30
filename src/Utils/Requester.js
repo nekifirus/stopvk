@@ -1,5 +1,5 @@
 import jsonpRequest from '../Utils/jsonpRequest';
-import linkCreator from '../Utils/linkCreator';
+import linkCreator, {executeLinkCreator} from '../Utils/linkCreator';
 
 export function delay(ms){
   return new Promise(function(resolve) {
@@ -17,30 +17,48 @@ export async function getwithOffset(params, onUpdate) {
       response = await delay(333).then(()=>jsonpRequest(url))
       console.log(response)
     } catch (e) {
+      console.log(e)
       throw e;
     }
+
     targetarr = targetarr.concat(response.items);
     requestparams.offset += response.items.length;
     stopvalue = response.count;
+
     if (typeof onUpdate === "function") {
       onUpdate(Math.floor(targetarr.length/stopvalue*100));
     }
   }
+
   return targetarr;
 }
 
+export async function deleteWithExecute(items, access_token, getApi, onUpdate) {
+  const count = 10, initiallength = items.length;
+  var deleted = [];
 
-export async function deleteWithExecute(items, type, access_token) {
-
-}
-
-export function findApiMethod(type) {
-  switch (type) {
-    case "photo":
-      return;
-
-    default:
-      return new Error("Апи метод не найдет. Неверный тип");
-
+  while(items.length) {
+    let todel = items.splice(-count);
+    console.log(todel)
+    let url = executeLinkCreator(
+      todel.map(item => getApi(item)),
+      access_token
+    );
+    try {
+      await delay(333).then(()=>jsonpRequest(url));
+    } catch (e) {
+      var err = {
+        deleted: deleted,
+        error: e
+      };
+      console.log(err)
+      throw err;
+    }
+    deleted = deleted.concat(todel);
+    if (typeof onUpdate === "function") {
+      onUpdate(Math.floor(100 - items.length/initiallength*100));
+    }
   }
+
+  return deleted;
 }

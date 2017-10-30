@@ -15,7 +15,7 @@ import {
 
 const initialState = {
   friendsarr: [],
-  friendslength: '',
+  friendsselected: 0,
 
   fetching: false,
   fetchmessage: '',
@@ -28,32 +28,29 @@ const initialState = {
 export default function friends(state = initialState, action) {
   switch (action.type) {
     case FRIENDS_REQUEST:
-      return {...state, fetching: true, fetchmessage: "Получаю список друзей",
-              friendslength: action.payload };
+      return {...state, fetching: true, fetchmessage: "Получаю список друзей"};
 
     case FRIENDS_SUCCESS:
-      return {...state, fetching: false, friendsarr: action.payload,
-              friendslength: action.payload.length };
+      return {...state, fetching: false, friendsarr: action.payload };
 
     case FRIENDS_FAIL:
       return {...state, fetching: false, error: action.payload };
 
 
     case FRIENDSDEL_REQUEST:
-      return {...state, fetching: true, fetchmessage: "Очищаю список друзей",
-              friendslength: action.payload };
+      return {...state, fetching: true, fetchmessage: "Очищаю список друзей" };
 
     case FRIENDSDEL_SUCCESS:
-      return {...state, fetching: false, completemess: "Список друзей очищен" };
+      return {...state, fetching: false, friendsarr: action.payload };
 
     case FRIENDSDEL_FAIL:
       return {...state, fetching: false, error: action.payload };
 
     case FRIENDS_SELECT:
-      return {...state, friendsarr: action.payload };
+      return {...state, friendsarr: action.payload, friendsselected: action.friendsselected };
 
     case FRIENDS_SELECTALL:
-      return {...state, friendsarr: action.payload };
+      return {...state, friendsarr: action.payload, friendsselected: action.friendsselected };
 
 
     default:

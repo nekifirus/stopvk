@@ -12,10 +12,10 @@ import {
 
 } from '../constants/Docs';
 
-import jsonpRequest from '../Utils/jsonpRequest';
-import linkCreator from '../Utils/linkCreator';
 
-import {getwithOffset} from '../Utils/Requester';
+
+import {getwithOffset, deleteWithExecute} from '../Utils/Requester';
+import {apiDelDocs} from '../Utils/APImethods';
 
 
 export function getDocs() {
@@ -29,7 +29,7 @@ export function getDocs() {
         access_token: state.auth.access_token,
         targetarr: [],
         requestparams: {
-          count: 100,
+          count: 2000,
           offset: 0
         }
       };
@@ -57,107 +57,80 @@ export function getDocs() {
 
 }
 
-export function getDocsOld(){
+export function delDocs() {
   return function(dispatch, getState) {
     const
-     state = getState(),
-     access_token = state.auth.access_token,
-     methodname = "execute.getDocs",
-     count = 100;
-    var
-      offset = 0,
-      docsarr = [];
-
-    dispatch({
-      type: DOCS_REQUEST,
-    })
-
-    getDocsRequest(docsarr);
-
-    function getDocsRequest(docsarr){
-      var requestLink = linkCreator(methodname, access_token,
-                                    {count: count, offset: offset});
-
-      jsonpRequest(requestLink)
-        .then((response) => {
-          docsarr = docsarr.concat(response.items);
-          offset += response.items.length;
-          if(offset >= response.count) {
-            dispatch({
-              type: DOCS_SUCCESS,
-              payload: docsarr
-            });
-          } else {
-            setTimeout(function(){
-              getDocsRequest(docsarr);
-            }, 333);
-          }
-        })
-        .catch((err) => {
-          err = JSON.stringify(err);
-          return dispatch({
-            type: DOCS_FAIL,
-            payload: err
-          });
-        })
-    }
-  }
-}
-
-export function delDocs(){
-  return function(dispatch, getState){
-    const
       state = getState(),
-      access_token = state.auth.access_token,
-      owner_id = state.auth.user_id,
-      methodname = "execute.delDocs",
-      count = 20;
+      access_token = state.auth.access_token;
 
-    var selecteddocs = [];
-    state.docs.docsarr.forEach((doc) => {
-      if(doc.isSelected) selecteddocs.push(doc.id);
-    })
+    var
+      docsarr = state.docs.docsarr,
+      docsToDelete = [], docsToSave = [];
+      docsarr.forEach((doc) => {
+        if(doc.isSelected) {
+          docsToDelete.push(doc);
+        } else {
+          docsToSave.push(doc)
+        }
+      });
 
-    dispatch({type: DOCSDEL_REQUEST});
+      dispatch({
+        type: DOCSDEL_REQUEST
+      })
 
-    delDocsRequest(selecteddocs);
-
-    function delDocsRequest(docsarr) {
-      if(!docsarr.length) return dispatch({type: DOCSDEL_SUCCESS});
-      var docsToDelete = docsarr.splice(-count, count);
-      var requestLink = linkCreator(methodname, access_token,
-                                    {doc_ids: docsToDelete.join(),
-                                     owner_id: owner_id });
-
-      jsonpRequest(requestLink)
-        .then((response) => {
-          setTimeout(function(){
-            delDocsRequest(docsarr);
-          }, 333);
+      deleteWithExecute(docsToDelete, access_token, apiDelDocs)
+        .then(deleted => {
+          dispatch({
+            type: DOCSDEL_SUCCESS,
+            payload: docsToSave,
+            selecteddocs: 0
+          })
         })
-        .catch((err) => {
-          err = JSON.stringify(err);
-          return dispatch({
-            type: DOCSDEL_FAIL,
-            payload: err
+        .catch(err => {
+          err.deleted.forEach(doc => {
+            let idx = docsarr.indexOf(doc);
+            docsarr.splice(idx, 1)
+          })
+          dispatch({
+            type: DOCSDEL_SUCCESS,
+            payload: docsarr,
+            selecteddocs: (docsToDelete.length - err.deleted.length)
           });
+          dispatch({
+            type: DOCSDEL_FAIL,
+            payload: JSON.stringify(err.error)
+          })
         })
-    }
 
   }
 }
+
+
+
+
+
+
 
 export function selectDoc(doc, index){
   return function(dispatch, getState){
     const state = getState();
-    var docsarr = state.docs.docsarr;
+    var
+      docsarr = state.docs.docsarr,
+      selecteddocs = state.docs.selecteddocs;
 
     doc.isSelected = !doc.isSelected;
     docsarr.splice(index, 1, doc);
 
+    if(doc.isSelected) {
+      selecteddocs += 1;
+    } else {
+      selecteddocs -= 1;
+    }
+
     dispatch({
       type: DOCS_SELECT,
-      payload: docsarr
+      payload: docsarr,
+      selecteddocs: selecteddocs
     })
   }
 }
@@ -173,7 +146,25 @@ export function selectAllDocs(){
 
     dispatch({
       type: DOCS_SELECTALL,
-      payload: docsarr
+      payload: docsarr,
+      selecteddocs: docsarr.length
+    });
+  }
+}
+
+export function dropDocsSelection(){
+  return function(dispatch, getState){
+    const state = getState();
+    var docsarr = state.docs.docsarr;
+
+    docsarr.forEach((doc, index) => {
+      docsarr[index].isSelected = false;
+    })
+
+    dispatch({
+      type: DOCS_SELECTALL,
+      payload: docsarr,
+      selecteddocs: 0
     });
   }
 }

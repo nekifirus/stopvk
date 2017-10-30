@@ -36,6 +36,16 @@ export const DelButton = (({del}) => (
   </div>
 ));
 
+export const CancelButton = (({cancel}) => (
+  <div className="button is-danger is-outlined" onClick={cancel}>
+    <span className="icon is-small">
+      <i className="fa fa-close fa-1x" aria-hidden="true"></i>
+    </span>
+    <span>Отменить</span>
+  </div>
+));
+
+
 
 export const GroupButtons = (({selectAll, drop, save, del}) => (
   <div className="has-text-centered">
@@ -60,7 +70,7 @@ export const GroupButtons = (({selectAll, drop, save, del}) => (
 
 
 
-export const TitleButtonsGroup = (({check, view, save}) => (
+export const TitleButtonsGroup = (({check, view, save, play}) => (
   <div className="overlaybuttonsgroup is-invisible">
     {check &&
       <div className="overlaybutton" onClick={check}>
@@ -75,6 +85,11 @@ export const TitleButtonsGroup = (({check, view, save}) => (
     {save &&
       <div className="overlaybutton" onClick={save}>
         <i className="fa fa-floppy-o fa-2x" aria-hidden="true"></i>
+      </div>
+    }
+    {play &&
+      <div className="overlaybutton" onClick={play}>
+        <i className="fa fa-youtube-play fa-2x" aria-hidden="true"></i>
       </div>
     }
 
@@ -100,9 +115,8 @@ export const SelectedIco = (({trigger}) => (
 
 export const Counters = (({all, selected}) => (
   <div className="has-text-centered">
-    {all > 0 &&
+
       <span className="subtitle">Всего:  {all}</span>
-    }
 
     {selected > 0 &&
       <span className="subtitle">Выбрано: {selected}</span>
@@ -151,7 +165,7 @@ export const Downloader = (({trigger, percent, file})=> (
   </div>
 ));
 
-export const Fetcher = (({trigger, message, percent}) => (
+export const Fetcher = (({trigger, message, percent, cancel}) => (
   <div className="has-text-warning">
     <Modal trigger={trigger}>
       <p><i className="fa fa-spinner fa-pulse fa-3x fa-fw"></i></p>
@@ -163,6 +177,10 @@ export const Fetcher = (({trigger, message, percent}) => (
           <progress className="progress is-large is-warning" value={percent} max={100}></progress>
           <p className="">{percent}%</p>
         </div>
+      }
+
+      {cancel &&
+        <CancelButton cancel={cancel} />
       }
     </Modal>
   </div>

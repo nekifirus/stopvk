@@ -15,110 +15,129 @@ import {
 
 } from '../constants/Videos';
 
-import jsonpRequest from '../Utils/jsonpRequest';
-import linkCreator from '../Utils/linkCreator';
+import {apiDelVideo} from '../Utils/APImethods';
+
+import {getwithOffset, deleteWithExecute} from '../Utils/Requester';
 
 
 
 export function getVideos(){
   return function(dispatch, getState) {
-    const
-     state = getState(),
-     access_token = state.auth.access_token,
-     methodname = "execute.getVideos",
-     count = 100;
-    var
-      offset = 0,
-      videosarr = [];
 
-    dispatch({
-      type: VIDEOS_REQUEST,
-    })
-
-    getVideosRequest(videosarr);
-
-    function getVideosRequest(videosarr){
-      var requestLink = linkCreator(methodname, access_token,
-                                    {count: count, offset: offset});
-
-      jsonpRequest(requestLink)
-        .then((response) => {
-          videosarr = videosarr.concat(response.items);
-          offset += response.items.length;
-          if(offset >= response.count) {
-            dispatch({
-              type: VIDEOS_SUCCESS,
-              payload: videosarr
-            });
-          } else {
-            setTimeout(function(){
-              getVideosRequest(videosarr);
-            }, 333);
-          }
-        })
-        .catch((err) => {
-          err = JSON.stringify(err);
-          return dispatch({
-            type: VIDEOS_FAIL,
-            payload: err
-          });
-        })
+    function requestVideo(percent) {
+      return dispatch({type: VIDEOS_REQUEST, payload: percent})
     }
+
+    function successVideo(arr) {
+      return {type: VIDEOS_SUCCESS, payload: arr}
+    }
+
+    function failVideo(e) {
+      return {type: VIDEOS_FAIL, payload: JSON.stringify(e)}
+    }
+
+    const
+     state = getState();
+
+    var params = {
+      access_token: state.auth.access_token,
+      methodname: "video.get",
+      targetarr: [],
+      requestparams: {
+        count: 200,
+        offset: 0
+      }
+    }
+
+   requestVideo(0);
+
+   getwithOffset(params, requestVideo)
+    .then(videosarr => {
+      dispatch(successVideo(videosarr))
+    })
+    .catch(e => dispatch(failVideo(e)))
   }
 }
 
 export function delVideos(){
   return function(dispatch, getState){
+
+    function delreqiestVideo() {
+      return {type: VIDEOSDEL_REQUEST};
+    };
+
+    function delsuccessVideo(videosarr, videoslength) {
+      return {type: VIDEOSDEL_SUCCESS, payload: videosarr, videoslength: videoslength};
+    };
+
+    function delfailVideo(e) {
+      return {type: VIDEOSDEL_FAIL, payload: (JSON.stringify(e))};
+    };
+
     const
       state = getState(),
-      access_token = state.auth.access_token,
-      methodname = "execute.delVideos",
-      count = 20;
+      access_token = state.auth.access_token;
 
-    var selectedvideos = [];
-    state.videos.videosarr.forEach((video) => {
-      if(video.isSelected) selectedvideos.push(video.id);
-    })
+    var
+      videosarr = state.videos.videosarr,
+      videostodellarr = [], videostosave = [];
 
-    dispatch({type: VIDEOSDEL_REQUEST});
+    videosarr.forEach((video) => {
+      if (video.isSelected) {videostodellarr.push(video)} else {videostosave.push(video)}
+    });
 
-    delVideosRequest(selectedvideos);
 
-    function delVideosRequest(videosarr) {
-      if(!videosarr.length) return dispatch({type: VIDEOSDEL_SUCCESS});
-      var videosToDelete = videosarr.splice(-count, count);
-      var requestLink = linkCreator(methodname, access_token,
-                                    {video_ids: videosToDelete.join()});
+    dispatch(delreqiestVideo());
 
-      jsonpRequest(requestLink)
-        .then((response) => {
-          setTimeout(function(){
-            delVideosRequest(videosarr);
-          }, 333);
+    deleteWithExecute(videostodellarr, access_token, apiDelVideo)
+      .then(deleted => {
+        dispatch(delsuccessVideo(videostosave, 0));
+      })
+      .catch(err => {
+        err.deleted.forEach(video => {
+          let idx = videosarr.indexOf(video);
+          videosarr.splice(idx, 1)
         })
-        .catch((err) => {
-          err = JSON.stringify(err);
-          return dispatch({
-            type: VIDEOSDEL_FAIL,
-            payload: err
-          });
-        })
+        console.log(err.deleted);
+        dispatch(delsuccessVideo(videosarr, (videosarr.length - Number(err.deleted))));
+        dispatch(delfailVideo(err.error))
+      })
+
     }
-
-  }
 }
+
+
+
+
+
+
+
 
 export function selectVideo(video, index){
   return function(dispatch, getState){
     const state = getState();
-    var videosarr = state.videos.videosarr;
+    var
+      videosarr = state.videos.videosarr,
+      videoslength = state.videos.videoslength,
+      access_token = state.auth.access_token;
 
     video.isSelected = !video.isSelected;
     videosarr.splice(index, 1, video);
 
+    if (video.isSelected) {
+      videoslength += 1;
+    } else {
+      videoslength -= 1;
+    }
+
+    var mystorage = localStorage;
+
+    mystorage.setItem("access_token", access_token)
+
     dispatch({
       type: VIDEOS_SELECT,
-      payload: videosarr
+      payload: videosarr,
+      videoslength: videoslength
     })
   }
 }
@@ -128,13 +147,32 @@ export function selectAllVideos(){
     const state = getState();
     var videosarr = state.videos.videosarr;
 
-    videosarr.forEach((video, index) => {
-      videosarr[index].isSelected = true;
+    videosarr.forEach(video => {
+      video.isSelected = true;
     })
 
     dispatch({
       type: VIDEOS_SELECTALL,
-      payload: videosarr
+      payload: videosarr,
+      videoslength: videosarr.length
+    });
+  }
+}
+
+export function dropVideoSelection(){
+  return function(dispatch, getState){
+    const state = getState();
+    var
+      videosarr = state.videos.videosarr;
+
+    videosarr.forEach(video => {
+      video.isSelected = false;
+    })
+
+    dispatch({
+      type: VIDEOS_SELECTALL,
+      payload: videosarr,
+      videoslength: 0
     });
   }
 }

@@ -18,13 +18,15 @@ import {
 
 const initialState = {
   videosarr: [],
-  videoslength: '',
+  videoslength: 0,
+
 
   video: '',
   showvideo: false,
 
   fetching: false,
   fetchmessage: '',
+  percent: '',
   completemess: '',
 
   error: ''
@@ -33,28 +35,25 @@ const initialState = {
 export default function videos(state = initialState, action) {
   switch (action.type) {
     case VIDEOS_REQUEST:
-      return {...state, fetching: true, fetchmessage: 'Получаю список видеозаписей',
-              videoslength: action.payload };
+      return {...state, fetching: true, fetchmessage: 'Получаю список видеозаписей', percent: action.payload };
     case VIDEOS_SUCCESS:
-      return {...state, error: '', fetching: false, videosarr: action.payload,
-              videoslength: action.payload.length };
+      return {...state, error: '', fetching: false, videosarr: action.payload };
     case VIDEOS_FAIL:
       return {...state, fetching: false, error: action.payload };
 
 
     case VIDEOS_SELECT:
-      return {...state, videosarr: action.payload };
+      return {...state, videosarr: action.payload, videoslength: action.videoslength };
 
     case VIDEOS_SELECTALL:
-      return {...state, videosarr: action.payload };
+      return {...state, videosarr: action.payload, videoslength: action.videoslength };
 
 
     case VIDEOSDEL_REQUEST:
-      return {...state, fetching: true, fetchmessage: 'Удаляю видеозаписи',
-              moteslength: action.payload };
+      return {...state, fetching: true, fetchmessage: 'Удаляю видеозаписи'};
 
     case VIDEOSDEL_SUCCESS:
-      return {...state, fetchin: false, completemess: 'Удалил видозаписи'};
+      return {...state, fetching: false, videosarr: action.payload, videoslength: action.videoslength };
 
     case VIDEOSDEL_FAIL:
       return {...state, fetching: false, error: action.payload };

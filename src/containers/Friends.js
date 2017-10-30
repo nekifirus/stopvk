@@ -3,8 +3,8 @@ import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux';
 import * as friendsActions from '../actions/FriendsActions';
 
-import { FavView } from '../components/Favs';
 import FriendsView from '../components/Friends';
+import {Fetcher} from '../components/Interface';
 
 
 class Friends extends Component {
@@ -14,24 +14,28 @@ class Friends extends Component {
       getFriends,
       unFriend,
       selectFriend,
-      selectAllFriends
+      selectAllFriends,
+      dropFriendsSelection
     } = this.props.friendsActions;
 
     return <div>
-      <FavView
-        title="У вас друзей:"
-        length={friends.friendslength}
-        fetching={friends.fetching}
-        fetchmessage={friends.fetchmessage}
-        completemess={friends.completemess}
-        error = {friends.error}
-        get = {getFriends}
-        del = {unFriend}
-      />
 
     <FriendsView friendsarr={friends.friendsarr}
+                 friendsselected={friends.friendsselected}
+                 get={getFriends}
+                 del={unFriend}
                  select={selectFriend}
-                 selectAll={selectAllFriends} />
+                 selectAll={selectAllFriends}
+                 drop={dropFriendsSelection}
+    />
+
+
+    {friends.fetching &&
+       <Fetcher trigger={friends.fetching}
+                message={friends.fetchmessage}
+
+         />
+    }
 
   </div>
 

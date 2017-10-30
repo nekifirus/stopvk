@@ -8,6 +8,7 @@ import createBrowserHistory from 'history/createBrowserHistory'
 
 
 import '../node_modules/bulma/css/bulma.css'
+import '../src/stylesheets/Groups.css'
 
 import App from './containers/App';
 
@@ -40,10 +41,12 @@ render(
   <Provider store={store}>
     <Router history={history}>
       <Switch>
+        <Route exact path="/intro" component={Jumbotron} />
 
       <Layout>
           <Route exact path ="/" component={App} />
           <App>
+            <Route exact path="/auth" component={Auth} />
             <Route exact path="/wall" component={Wall} />
             <Route exact path="/favs" component={Favs} />
             <Route exact path="/messages" component={Mess} />
@@ -58,8 +61,8 @@ render(
           </App>
 
           <Route path="/about" component={About} />
-          <Route path="/auth" component={Auth} />
-          <Route path="/intro" component={Jumbotron} />
+
+
       </Layout>
       </Switch>
     </Router>

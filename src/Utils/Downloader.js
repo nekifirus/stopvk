@@ -15,7 +15,7 @@ function downloadBlob(url) {
 
     try {
             var xhr = new XMLHttpRequest();
-            xhr.open("GET", "https://cors-anywhere.herokuapp.com/" + url);
+            xhr.open("GET", "http://192.168.1.39:8080/" + url);
             xhr.responseType = "blob";
             xhr.onerror = function() {reject("Network error.")};
             xhr.onload = function() {
