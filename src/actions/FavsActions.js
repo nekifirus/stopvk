@@ -44,113 +44,356 @@ import {
   FAVMARKITDEL_SUCCESS,
   FAVMARKITDEL_FAIL,
 
-  //fav photo
-  FAVPHOTO_REQUEST,
-  FAVPHOTO_SUCCESS,
-  FAVPHOTO_FAIL,
 
-  FAVPHOTODEL_REQUEST,
-  FAVPHOTODEL_SUCCESS,
-  FAVPHOTODEL_FAIL,
-
-  FAVPHOTO_SHOWGALERY,
-  FAVPHOTO_SHOWMORE,
-  FAVPHOTO_SELECTIMAGE,
-  FAVPHOTO_SELECTALL,
-
-
-  //captcha
-  CAPTCHA_NEEDED
 
 } from '../constants/Favs';
 
-import jsonpRequest from '../Utils/jsonpRequest';
-import linkCreator from '../Utils/linkCreator';
-import arrPrepare from '../Utils/arrPrepare';
-import likesPrepare from '../Utils/likesPrepare';
-import imagearrPrepare from '../Utils/photoPrepare';
+import {
+  CAPTCHA_NEEDED
+} from '../constants/Captcha';
 
 
+import {getwithOffset, deleteWithExecute} from '../Utils/Requester';
+import {
+  apiFaveDelLink,
+  apiFaveDelUser,
+  apiUnLike
+} from '../Utils/APImethods';
 
 
-export function favegetLinks() {
+export function initFavs() {
   return function(dispatch, getState) {
     const
       state = getState(),
-      params = {
-        access_token: state.auth.access_token,
-        methodname: "fave.getLinks",
-        count: 50,
-        actiontypes: {
-          request: FAVLINKS_REQUEST,
-          success: FAVLINKS_SUCCESS,
-          fail: FAVLINKS_FAIL
-        }
-      };
+      access_token = state.auth.access_token;
 
-
-    getFave(params, dispatch);
+      initSeq(access_token, dispatch)
   }
 }
+
+
+async function initSeq(access_token, dispatch) {
+
+  await favegetLinks(access_token, dispatch);
+  await favegetUsers(access_token, dispatch);
+  await favegetVideos(access_token, dispatch);
+  await favegetPosts(access_token, dispatch);
+  await favegetMarkit(access_token, dispatch);
+}
+
+
+async function favegetLinks(access_token, dispatch) {
+
+  function onUpdate(percent) {
+    dispatch({
+      type: FAVLINKS_REQUEST,
+      payload: percent
+    })
+  }
+
+  function onSuccess(linkarr) {
+    dispatch({
+      type: FAVLINKS_SUCCESS,
+      payload: linkarr
+    })
+  }
+
+  function onError(e) {
+    dispatch({
+      type: FAVLINKS_FAIL,
+      payload: e
+    })
+  }
+
+  var params = {
+    access_token: access_token,
+    methodname: "fave.getLinks",
+    targetarr: [],
+    requestparams: {
+      count: 50,
+      offset: 0
+    }
+  };
+
+  getwithOffset(params, onUpdate)
+    .then(onSuccess)
+    .catch(onError)
+
+}
+
+
+
+async function favegetUsers(access_token, dispatch) {
+
+  function onUpdate(percent) {
+    dispatch({
+      type: FAVUSER_REQUEST,
+      payload: percent
+    })
+  }
+
+  function onSuccess(linkarr) {
+    dispatch({
+      type: FAVUSER_SUCCESS,
+      payload: linkarr
+    })
+  }
+
+  function onError(e) {
+    dispatch({
+      type: FAVUSER_FAIL,
+      payload: e
+    })
+  }
+
+  var params = {
+    access_token: access_token,
+    methodname: "fave.getUsers",
+    targetarr: [],
+    requestparams: {
+      count: 50,
+      offset: 0
+    }
+  };
+
+  getwithOffset(params, onUpdate)
+    .then(onSuccess)
+    .catch(onError)
+
+}
+
+async function favegetVideos(access_token, dispatch) {
+
+  function onUpdate(percent) {
+    dispatch({
+      type: FAVVIDEO_REQUEST,
+      payload: percent
+    })
+  }
+
+  function onSuccess(linkarr) {
+    dispatch({
+      type: FAVVIDEO_SUCCESS,
+      payload: linkarr
+    })
+  }
+
+  function onError(e) {
+    dispatch({
+      type: FAVVIDEO_FAIL,
+      payload: e
+    })
+  }
+
+  var params = {
+    access_token: access_token,
+    methodname: "fave.getVideos",
+    targetarr: [],
+    requestparams: {
+      count: 50,
+      offset: 0
+    }
+  };
+
+  getwithOffset(params, onUpdate)
+    .then(onSuccess)
+    .catch(onError)
+
+}
+
+
+async function favegetPosts(access_token, dispatch) {
+
+  function onUpdate(percent) {
+    dispatch({
+      type: FAVPOSTS_REQUEST,
+      payload: percent
+    })
+  }
+
+  function onSuccess(linkarr) {
+    dispatch({
+      type: FAVPOSTS_SUCCESS,
+      payload: linkarr
+    })
+  }
+
+  function onError(e) {
+    dispatch({
+      type: FAVPOSTS_FAIL,
+      payload: e
+    })
+  }
+
+  var params = {
+    access_token: access_token,
+    methodname: "fave.getPosts",
+    targetarr: [],
+    requestparams: {
+      count: 100,
+      offset: 0
+    }
+  };
+
+  getwithOffset(params, onUpdate)
+    .then(onSuccess)
+    .catch(onError)
+
+}
+
+
+async function favegetMarkit(access_token, dispatch) {
+
+  function onUpdate(percent) {
+    dispatch({
+      type: FAVMARKIT_REQUEST,
+      payload: percent
+    })
+  }
+
+  function onSuccess(linkarr) {
+    dispatch({
+      type: FAVMARKIT_SUCCESS,
+      payload: linkarr
+    })
+  }
+
+  function onError(e) {
+    dispatch({
+      type: FAVMARKIT_FAIL,
+      payload: e
+    })
+  }
+
+  var params = {
+    access_token: access_token,
+    methodname: "fave.getMarketItems",
+    targetarr: [],
+    requestparams: {
+      count: 50,
+      offset: 0
+    }
+  };
+
+
+  getwithOffset(params, onUpdate)
+    .then(onSuccess)
+    .catch(onError)
+
+}
+
+
+
+
+function captchaneeded (img, sid, func) {
+
+  return {
+    type: CAPTCHA_NEEDED,
+    img: img,
+    sid: sid,
+    func: func
+  }
+}
+
+
+
+
+
+
 
 export function favedelLinks() {
   return function(dispatch, getState) {
     const
       state = getState(),
-      params = {
-        access_token: state.auth.access_token,
-        targetarr: state.favs.linkarr,
+      access_token = state.auth.access_token;
 
-        methodname: "execute.favlinks_del",
-        actiontypes: {
-          request: FAVLINKSDEL_REQUEST,
-          success: FAVLINKSDEL_SUCCESS,
-          fail: FAVLINKSDEL_FAIL
-        }
-      };
-    delFave(params, dispatch)
+    var linkarr = state.favs.linkarr;
+
+    function onSuccess(deleted) {
+      deleted.forEach(link => {
+        let idx = linkarr.indexOf(link);
+        linkarr.splice(idx, 1)
+      });
+
+      dispatch({
+        type: FAVLINKSDEL_SUCCESS,
+        payload: linkarr
+      });
+    };
+
+    function onError(err) {
+      onSuccess(err.deleted);
+      if (err.error.error_code === 14) {
+        let img = err.error.captcha_img;
+        let sid = err.error.captcha_sid;
+        dispatch(captchaneeded(img, sid, favedelLinks))
+      }
+      dispatch({
+        type: FAVLINKSDEL_FAIL,
+        payload: err.e
+      });
+    }
+
+    function onUpdate(percent) {
+      dispatch({
+        type: FAVLINKSDEL_REQUEST,
+        percent: percent
+      });
+    };
+
+    deleteWithExecute(linkarr, access_token, apiFaveDelLink, onUpdate)
+      .then(onSuccess)
+      .catch(onError)
   }
-}
+};
 
 
 
 
-export function favegetUsers() {
-  return function(dispatch, getState){
-    const
-      state = getState(),
-      params = {
-        access_token: state.auth.access_token,
-        methodname: "fave.getUsers",
-        count: 50,
-        actiontypes: {
-          request: FAVUSER_REQUEST,
-          success: FAVUSER_SUCCESS,
-          fail: FAVUSER_FAIL
-        }
-      };
-
-    getFave(params, dispatch);
-  }
-}
 
 export function favedelUsers() {
   return function(dispatch, getState) {
     const
       state = getState(),
-      params = {
-        access_token: state.auth.access_token,
-        targetarr: state.favs.userarr,
+      access_token = state.auth.access_token;
 
-        methodname: "execute.favusers_del",
-        actiontypes: {
-          request: FAVUSERDEL_REQUEST,
-          success: FAVUSERDEL_SUCCESS,
-          fail: FAVUSERDEL_FAIL
-        }
+    var userarr = state.favs.userarr;
+
+    function onSuccess(deleted) {
+      deleted.forEach(link => {
+        let idx = userarr.indexOf(link);
+        userarr.splice(idx, 1)
+      });
+
+      dispatch({
+        type: FAVUSERDEL_SUCCESS,
+        payload: userarr
+      });
+    };
+
+    function onError(err) {
+      onSuccess(err.deleted);
+      if (err.error.error_code === 14) {
+        let img = err.error.captcha_img;
+        let sid = err.error.captcha_sid;
+        dispatch(captchaneeded(img, sid, favedelUsers))
       }
+      dispatch({
+        type: FAVUSERDEL_FAIL,
+        payload: err.e
+      });
+    }
 
-    delFave(params, dispatch);
+    function onUpdate(percent) {
+      dispatch({
+        type: FAVUSERDEL_REQUEST,
+        percent: percent
+      });
+    };
+
+    deleteWithExecute(userarr, access_token, apiFaveDelUser, onUpdate)
+      .then(onSuccess)
+      .catch(onError)
   }
 }
 
@@ -159,512 +402,169 @@ export function favedelUsers() {
 
 
 
-export function favegetVideos() {
-  return function(dispatch, getState) {
-    const
-      state = getState(),
-      params = {
-        access_token: state.auth.access_token,
-        methodname: "fave.getVideos",
-        count: 50,
-        actiontypes: {
-          request: FAVVIDEO_REQUEST,
-          success: FAVVIDEO_SUCCESS,
-          fail: FAVVIDEO_FAIL
-        }
-      };
 
-    getFave(params, dispatch);
-  };
-};
+
+
 
 export function favedelVideos() {
   return function(dispatch, getState) {
     const
       state = getState(),
-      params = {
-        access_token: state.auth.access_token,
-        targetarr: state.favs.videoarr,
-        targettype: "video",
+      access_token = state.auth.access_token;
 
-        actiontypes: {
-          request: FAVVIDEODEL_REQUEST,
-          success: FAVVIDEODEL_SUCCESS,
-          fail: FAVVIDEODEL_FAIL
-        }
-      };
+    var videoarr = state.favs.videoarr;
 
-    unLike(params, dispatch);
+    function onSuccess(deleted) {
+      deleted.forEach(link => {
+        let idx = videoarr.indexOf(link);
+        videoarr.splice(idx, 1)
+      });
+
+      dispatch({
+        type: FAVVIDEODEL_SUCCESS,
+        payload: videoarr
+      });
+    };
+
+    function onError(err) {
+      onSuccess(err.deleted);
+      if (err.error.error_code === 14) {
+        let img = err.error.captcha_img;
+        let sid = err.error.captcha_sid;
+        dispatch(captchaneeded(img, sid, favedelVideos))
+      }
+      dispatch({
+        type: FAVVIDEODEL_FAIL,
+        payload: err.e
+      });
+    }
+
+    function onUpdate(percent) {
+      dispatch({
+        type: FAVVIDEODEL_REQUEST,
+        percent: percent
+      });
+    };
+
+    function unLikeVideo(video) {
+      return apiUnLike("video", video.owner_id, video.id)
+    }
+
+    deleteWithExecute(videoarr, access_token, unLikeVideo, onUpdate)
+      .then(onSuccess)
+      .catch(onError)
   }
 }
 
 
 
-export function favegetPosts() {
-  return function(dispatch, getState) {
-    const
-      state = getState(),
-      params = {
-        access_token: state.auth.access_token,
-        methodname: "execute.faveposts_get",
-        count: 30,
-        actiontypes: {
-          request: FAVPOSTS_REQUEST,
-          success: FAVPOSTS_SUCCESS,
-          fail: FAVPOSTS_FAIL
-        }
-      }
-
-
-    getPosts(params, dispatch);
-
-    function getPosts(params, dispatch) {
-      const
-        { access_token, methodname, count, actiontypes } = params,
-        { request, success, fail } = actiontypes;
-
-      var
-        offset = 0,
-        targetarr = [];
-
-      dispatch({
-        type: request,
-        payload: targetarr.length
-      })
-
-      faveRequestCycle(offset);
-
-      function faveRequestCycle(offset) {
-
-        jsonpRequest(linkCreator(methodname,
-                          access_token,
-                          { count: count, offset: offset }))
-          .then(function(response) {
-            targetarr = targetarr.concat(response.items);
-            offset = response.offset;
-            console.log(response.count, offset, targetarr)
-            //странно работает. отдает не все. разобраться
-            if (!response.items.length) return dispatch({
-                type: success,
-                payload: targetarr
-              });
-            dispatch({
-              type: request,
-              payload: targetarr.length
-            });
-            setTimeout(function() {
-              faveRequestCycle(offset)
-            }, 333);
-          })
-          .catch(function(err){
-            err = JSON.stringify(err);
-            return dispatch({
-              type: fail,
-              payload: err
-            });
-          });
-      };
-    };
-  };
-};
 
 
 export function favedelPosts() {
   return function(dispatch, getState) {
     const
       state = getState(),
-      params = {
-        access_token: state.auth.access_token,
-        targetarr: state.favs.postsarr,
-        targettype: "post",
-        actiontypes: {
-          request: FAVPOSTSDEL_REQUEST,
-          success: FAVPOSTSDEL_SUCCESS,
-          fail: FAVPOSTSDEL_FAIL
-        }
-      };
+      access_token = state.auth.access_token;
 
-    unLike(params, dispatch);
+    var postsarr = state.favs.postsarr;
+
+    function onSuccess(deleted) {
+      deleted.forEach(link => {
+        let idx = postsarr.indexOf(link);
+        postsarr.splice(idx, 1)
+      });
+
+      dispatch({
+        type: FAVPOSTSDEL_SUCCESS,
+        payload: postsarr
+      });
+    };
+
+    function onError(err) {
+      onSuccess(err.deleted);
+      if (err.error.error_code === 14) {
+        let img = err.error.captcha_img;
+        let sid = err.error.captcha_sid;
+        dispatch(captchaneeded(img, sid, favedelPosts))
+      }
+      dispatch({
+        type: FAVPOSTSDEL_FAIL,
+        payload: err.e
+      });
+    }
+
+    function onUpdate(percent) {
+      dispatch({
+        type: FAVPOSTSDEL_REQUEST,
+        percent: percent
+      });
+    };
+
+    function unLikePost(post) {
+      return apiUnLike("post", post.owner_id, post.id)
+    }
+
+    deleteWithExecute(postsarr, access_token, unLikePost, onUpdate)
+      .then(onSuccess)
+      .catch(onError)
   }
 }
 
 
 
-function unLike(params, dispatch) {
-
-  const
-    { access_token, targetarr, targettype, actiontypes } = params,
-    { request, success, fail } = actiontypes,
-    count = 15;
-
-  if (!targetarr.length) return dispatch({ type: success });
-
-  dispatch({
-    type: request,
-    payload: targetarr.length
-  });
-
-  var
-    likestoDelete = likesPrepare(targetarr, count),
-    requestLink = linkCreator("execute.unlike", access_token,
-                { items: likestoDelete, type: targettype });
-
-  if (params.captcha_key) {
-    requestLink = requestLink + "&captcha_sid=" + params.captcha_sid + "&captcha_key=" + params.captcha_key;
-    console.log(requestLink)
-    delete params.captcha_key;
-    delete params.captcha_sid;
-  }
-
-  jsonpRequest(requestLink)
-    .then(function(response){
-      console.log(response)
-      targetarr.splice(-count, count);
-      params.targetarr = targetarr;
-      setTimeout(function() {
-       unLike(params, dispatch);
-      }, 333);
-    })
-    .catch(function(err){
-      if (err.error_code === 14) {
-        return dispatch({
-          type: CAPTCHA_NEEDED,
-          img: err.captcha_img,
-          sid: err.captcha_sid,
-          params: params
-        });
-      };
-      err = JSON.stringify(err);
-      return dispatch({
-        type: fail,
-        payload: err
-      });
-    });
-};
 
 
 
 
 
 
-function getFave(params, dispatch) {
-  const
-    { methodname, count, access_token, actiontypes } = params,
-    { request, success, fail } = actiontypes;
-
-  var
-    offset = 0,
-    targetarr = [];
-
-  faveRequestCycle(offset);
-
-  function faveRequestCycle(offset) {
-
-    dispatch({
-      type: request,
-      payload: targetarr.length
-    });
-
-    var requestLink = linkCreator(methodname, access_token,
-                                  { count: count, offset: offset });
-    jsonpRequest(requestLink)
-      .then(function(response){
-        console.log(response)
-        targetarr = targetarr.concat(response.items);
-        offset = offset + response.items.length;
-
-        if (offset >= response.count) {
-
-          return dispatch({
-              type: success,
-              payload: targetarr
-          });
-        }
-        setTimeout(function() {
-          faveRequestCycle(offset)
-        }, 333);
-      })
-      .catch(function(err){
-        err = JSON.stringify(err);
-        return dispatch({
-          type: fail,
-          payload: err
-        });
-      });
-  };
-};
-
-
-
-function delFave(params, dispatch) {
-  const
-    { methodname, access_token, targetarr, actiontypes } = params,
-    { request, success, fail } = actiontypes,
-    count = 20;
-
-  if (!targetarr.length) return dispatch({ type: success });
-
-  dispatch({
-    type: request,
-    payload: targetarr.length
-  });
-
-  var favstoDelete = arrPrepare(targetarr, count),
-      requestLink = linkCreator(methodname, access_token,
-                                { count: count, favs: favstoDelete });
-
-  jsonpRequest(requestLink)
-    .then(function(response){
-      dispatch({
-        type: request,
-        payload: targetarr.length
-      });
-      targetarr.splice(-count, count);
-      params.targetarr = targetarr;
-      setTimeout(function() {
-       delFave(params, dispatch);
-      }, 333);
-    })
-    .catch(function(err){
-      err = JSON.stringify(err);
-      return dispatch({
-        type: fail,
-        payload: err
-      });
-    });
-};
-
-
-
-
-export function favegetMarkit(){
-  return function(dispatch, getState){
-    const
-      state = getState(),
-      params = {
-        access_token: state.auth.access_token,
-        methodname: "fave.getMarketItems",
-        count: 50,
-        actiontypes: {
-          request: FAVMARKIT_REQUEST,
-          success: FAVMARKIT_SUCCESS,
-          fail: FAVMARKIT_FAIL
-        }
-      };
-
-    getFave(params, dispatch);
-  };
-};
 
 export function favedelMarkit() {
   return function(dispatch, getState) {
     const
       state = getState(),
-      params = {
-        access_token: state.auth.access_token,
-        targetarr: state.favs.markitarr,
-        targettype: "market",
+      access_token = state.auth.access_token;
 
-        actiontypes: {
-          request: FAVMARKITDEL_REQUEST,
-          success: FAVMARKITDEL_SUCCESS,
-          fail: FAVMARKITDEL_FAIL
-        }
-      };
+    var markitarr = state.favs.markitarr;
 
-    unLike(params, dispatch);
-  };
-};
-
-
-
-//////////////////PHOTO////////////////////
-
-export function favegetPhotos(){
-  return function(dispatch, getState){
-    const
-      state = getState(),
-      params = {
-        access_token: state.auth.access_token,
-        methodname: "execute.favephotos_get",
-        photoarr: [],
-        linkparams: {
-          offset: 0,
-          count: 50,
-          photo_sizes: 1
-        },
-        actiontypes: {
-          request: FAVPHOTO_REQUEST,
-          success: FAVPHOTO_SUCCESS,
-          fail: FAVPHOTO_FAIL
-        }
-      };
-
-
-    function getFavePhoto(params) {
-      return new Promise((resolve, reject) => {
-        var {access_token, methodname, linkparams} = params;
-        var requestLink = linkCreator(methodname,
-                                      access_token,
-                                      linkparams);
-        jsonpRequest(requestLink)
-         .then(function(response){
-           params.photoarr = params.photoarr.concat(response.items);
-           params.linkparams.offset = params.linkparams.offset + response.items.length;
-
-           if (params.linkparams.offset >= response.count) {
-             resolve (params.photoarr);
-           } else {
-             setTimeout(function() {
-                getFavePhoto(params)
-              }, 333);
-           }
-          })
-          .catch(function(err){
-            reject (err);
-          });
-      })
-    };
-
-  dispatch({type: params.actiontypes.request, payload: params.photoarr.length})
-  getFavePhoto(params)
-   .then((photoarr) => {
-      Promise.resolve(dispatch({
-        type: params.actiontypes.success,
-        payload: photoarr
-      }))
-    })
-    .then(() => {
-      preparePhoto(dispatch, getState);
-    })
-    .catch((err) => {
-      err = JSON.stringify(err);
-      return dispatch({
-        type: params.actiontypes.fail,
-        payload: err
+    function onSuccess(deleted) {
+      deleted.forEach(link => {
+        let idx = markitarr.indexOf(link);
+        markitarr.splice(idx, 1)
       });
-    })
-
-  };
-};
-
-export function showFavGalery(){
- return function (dispatch, getState) {
-   const state = getState();
-   var trigger = state.favs.gallerytrigger;
-
-   preparePhoto(dispatch, getState);
-   trigger = !trigger;
-   dispatch({
-     type: FAVPHOTO_SHOWGALERY,
-     payload: trigger
-   });
-
-
- }
-};
-
-export function showMoreFavPhotos(){
-  return function(dispatch, getState) {
-    preparePhoto(dispatch, getState);
-
-  }
-}
-
-function preparePhoto(dispatch, getState) {
-  const state = getState();
-  var
-    origarr = state.favs.photoarrorig,
-    photoarr = state.favs.photoarr;
-  console.log(origarr, photoarr)
-
-
-
-  imagearrPrepare(origarr.splice(0, 20))
-    .then((arr) => {
-      photoarr = photoarr.concat(arr);
-      console.log(photoarr);
-      return photoarr;
-    })
-    .then((arr) => {
 
       dispatch({
-        type: FAVPHOTO_SHOWMORE,
-        arr: arr,
-        orig: origarr
+        type: FAVMARKITDEL_SUCCESS,
+        payload: markitarr
       });
-    })
-    .catch((err)=> {
-      err = JSON.stringify(err);
-      return dispatch({
-        type: FAVPHOTO_FAIL,
-        payload: err
+    };
+
+    function onError(err) {
+      onSuccess(err.deleted);
+      if (err.error.error_code === 14) {
+        let img = err.error.captcha_img;
+        let sid = err.error.captcha_sid;
+        dispatch(captchaneeded(img, sid, favedelMarkit))
+      }
+      dispatch({
+        type: FAVMARKITDEL_FAIL,
+        payload: err.e
       });
-    })
-}
+    }
 
-export function selectFavPhoto(index, image) {
-  return function(dispatch, getState) {
-    const state = getState();
-    var photoarr = state.favs.photoarr;
+    function onUpdate(percent) {
+      dispatch({
+        type: FAVMARKITDEL_REQUEST,
+        percent: percent
+      });
+    };
 
-    image.isSelected = !image.isSelected;
-    photoarr.splice(index, 1, image);
+    function unLikeMarkit(markit) {
+      return apiUnLike("markiet_item", markit.owner_id, markit.id)
+    }
 
-    dispatch({
-      type: FAVPHOTO_SELECTIMAGE,
-      payload: photoarr
-    });
+    deleteWithExecute(markitarr, access_token, unLikeMarkit, onUpdate)
+      .then(onSuccess)
+      .catch(onError)
   };
 };
-
-export function selectAllFavPhotos() {
-  return function(dispatch, getState) {
-    const state = getState();
-    var
-      photoarr = state.favs.photoarr,
-      photoarrorig = state.favs.photoarrorig;
-
-    photoarr.forEach((item) => item.isSelected = !item.isSelected);
-    photoarrorig.forEach((item) => item.isSelected = !item.isSelected);
-
-    dispatch({
-      type: FAVPHOTO_SELECTALL,
-      arr: photoarr,
-      orig: photoarrorig
-    })
-  }
-}
-
-
-export function favedelPhotos(){
-  return function(dispatch, getState) {
-    const
-      state = getState();
-    var
-      params = {
-        access_token: state.auth.access_token,
-        targetarr: [],
-        targettype: "photo",
-
-        actiontypes: {
-          request: FAVPHOTODEL_REQUEST,
-          success: FAVPHOTODEL_SUCCESS,
-          fail: FAVPHOTODEL_FAIL
-        }
-      },
-      { photoarr, photoarrorig } = state.favs;
-
-    photoarr = photoarr.concat(photoarrorig);
-    console.log("before delete selected", photoarr)
-    photoarr.forEach((item) => {
-      if(!item.isSelected) params.targetarr.push(item)
-    });
-
-
-
-    unLike(params, dispatch);
-  };
-}
-
-/////////////////CAPTCHA/////////////////

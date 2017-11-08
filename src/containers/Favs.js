@@ -2,8 +2,10 @@ import React, {Component} from 'react';
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux';
 import * as favsActions from '../actions/FavsActions';
+import * as captchaActions from '../actions/CaptchaActions'
 
 import { FavView } from '../components/Favs';
+import {Fetcher} from '../components/Interface';
 import Captcha from '../components/Captcha';
 
 
@@ -11,95 +13,78 @@ class Favs extends Component {
 
   render() {
     const
-      { favs } = this.props,
-      { favegetLinks,
+      { favs, captcha } = this.props,
+      {
+        initFavs,
         favedelLinks,
-        favegetUsers,
         favedelUsers,
-        favegetVideos,
         favedelVideos,
-        favegetPosts,
         favedelPosts,
-        favegetMarkit,
-        favedelMarkit,
-        setCaptcha,
-        cancelCaptcha,
-        submitCaptcha
+        favedelMarkit
       } = this.props.favsActions;
 
-
+      const {
+        setCaptcha,
+        submitCaptcha,
+        cancelCaptcha
+      } = this.props.captchaActions;
 
     return <div>
       <FavView
-        title="Ссылок в закладках:"
-        length={favs.linklength}
-        fetching={favs.fetching}
-        fetchmessage={favs.fetchmessage}
-        completemess={favs.completemess}
-        error = {favs.error}
-        get = {favegetLinks}
+        title="Ссылки"
+        arr={favs.linkarr}
+        get={initFavs}
         del = {favedelLinks}
       />
 
       <FavView
-        title="Пользователей в закладках:"
-        length={favs.userlength}
-        fetching={favs.fetching}
-        fetchmessage={favs.fetchmessage}
-        completemess={favs.completemess}
-        error = {favs.error}
-        get = {favegetUsers}
+        title="Пользователи"
+        arr={favs.userarr}
+        get={() =>{}}
         del = {favedelUsers}
       />
 
       <FavView
-        title="Видеозаписей в закладках:"
-        length={favs.videolength}
-        fetching={favs.fetching}
-        fetchmessage={favs.fetchmessage}
-        completemess={favs.completemess}
-        error = {favs.error}
-        get = {favegetVideos}
+        title="Видеозаписи"
+        arr={favs.videoarr}
+        get={() =>{}}
         del = {favedelVideos}
       />
 
 
       <FavView
-        title="Постов в закладках:"
-        length={favs.postslength}
-        fetching={favs.fetching}
-        fetchmessage={favs.fetchmessage}
-        completemess={favs.completemess}
-        error = {favs.error}
-        get = {favegetPosts}
+        title="Посты"
+        arr={favs.postsarr}
+        get={() =>{}}
         del = {favedelPosts}
       />
 
       <FavView
-        title="Товаров в закладках:"
-        length={favs.markitlength}
-        fetching={favs.fetching}
-        fetchmessage={favs.fetchmessage}
-        completemess={favs.completemess}
-        error = {favs.error}
-        get = {favegetMarkit}
+        title="Товары"
+        arr={favs.markitarr}
+        get={() =>{}}
         del = {favedelMarkit}
       />
 
+    {favs.fetching &&
+         <Fetcher trigger={favs.fetching}
+                  message={favs.fetchmessage}
+                  percent={favs.percent}
+
+           />
+      }
 
 
-
-      {favs.captcha_img
-        ?
+      {captcha.captcha_img &&
         <Captcha
-          captcha_img={favs.captcha_img}
-          captcha_key={favs.captcha_key}
-          setCaptcha={setCaptcha}
-          cancelCaptcha={cancelCaptcha}
-          submitCaptcha={submitCaptcha}
+            captcha_img={captcha.captcha_img}
+            captcha_key={captcha.captcha_key}
+            setCaptcha={setCaptcha}
+            submitCaptcha={submitCaptcha}
+            cancelCaptcha={cancelCaptcha}
 
         />
-        : ''
+
       }
 
       </div>
@@ -107,12 +92,13 @@ class Favs extends Component {
 }
 
 function mapStateToProps(state) {
-  return {favs: state.favs}
+  return {favs: state.favs, captcha: state.captcha}
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    favsActions: bindActionCreators(favsActions, dispatch)
+    favsActions: bindActionCreators(favsActions, dispatch),
+    captchaActions: bindActionCreators(captchaActions, dispatch)
   }
 }
 

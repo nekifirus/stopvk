@@ -25,6 +25,9 @@ export async function getwithOffset(params, onUpdate) {
     requestparams.offset += response.items.length;
     stopvalue = response.count;
 
+    //из-за fave.getPosts который не отдает до конца посты
+    if(response.items.length === 0) stopvalue = requestparams.offset;
+
     if (typeof onUpdate === "function") {
       onUpdate(Math.floor(targetarr.length/stopvalue*100));
     }

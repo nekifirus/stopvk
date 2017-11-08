@@ -1,35 +1,54 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
+const NavItem = (({to, title, icon}) => (
+  <NavLink className="panel-block" activeClassName="is-active" to={to}>
+    <span className="icon">
+      <i className={"fa " + icon}></i>
+    </span>
+    <span>{title}</span>
+  </NavLink>
+));
+
+const NavItemTab = (({to, title, icon}) => (
+  <NavLink className="li" activeClassName="is-active" to={to}>
+    <span className="icon">
+      <i className={"fa " + icon}></i>
+    </span>
+    <span>{title}</span>
+  </NavLink>
+));
+
 
 const Menu = () => <div>
 
   <nav className="panel is-hidden-mobile">
-      <div><NavLink className="panel-block" activeClassName="is-active" to="/wall">Стена</NavLink></div>
-      <div><NavLink className="panel-block" activeClassName="is-active" to="/favs">Закладки</NavLink></div>
-      <div><NavLink className="panel-block" activeClassName="is-active" to="/favphotos">FAVФотографии</NavLink></div>
-      <div><NavLink className="panel-block" activeClassName="is-active" to="/messages">Личные сообщения</NavLink></div>
-      <div><NavLink className="panel-block" activeClassName="is-active" to="/groups">Группы</NavLink></div>
-      <div><NavLink className="panel-block" activeClassName="is-active" to="/friends">Друзья</NavLink></div>
-      <div><NavLink className="panel-block" activeClassName="is-active" to="/notes">Заметки</NavLink></div>
-      <div><NavLink className="panel-block" activeClassName="is-active" to="/docs">Документы</NavLink></div>
-      <div><NavLink className="panel-block" activeClassName="is-active" to="/videos">Видеозаписи</NavLink></div>
-      <div><NavLink className="panel-block" activeClassName="is-active" to="/photos">Фотографии</NavLink></div>
+      <div><NavItem to={"/photos"} title={"Фотографии"} icon={"fa-camera"} /></div>
+      <div><NavItem to={"/friends"} title={"Друзья"} icon={"fa-user"} /></div>
+      <div><NavItem to={"/groups"} title={"Группы"} icon={"fa-users"} /></div>
+      <div><NavItem to={"/videos"} title={"Видеозаписи"} icon={"fa-film"} /></div>
+      <div><NavItem to={"/messages"} title={"Сообщения"} icon={"fa-commenting"} /></div>
+      <div><NavItem to={"/wall"} title={"Стена"} icon={"fa-bars"} /></div>
+      <div><NavItem to={"/favs"} title={"Закладки"} icon={"fa-heart"} /></div>
+      <div><NavItem to={"/notes"} title={"Заметки"} icon={"fa-sticky-note"} /></div>
+      <div><NavItem to={"/docs"} title={"Документы"} icon={"fa-file"} /></div>
+
+
+
 
   </nav>
 
-  <div className="tabs is-centered is-boxed is-hidden-tablet">
+  <div className="tabs is-toggle is-centered is-boxed is-hidden-tablet">
     <ul>
-      <li><NavLink activeClassName="is-active" to="/wall">Стена</NavLink></li>
-      <li><NavLink activeClassName="is-active" to="/favs">Закладки</NavLink></li>
-      <li><NavLink activeClassName="is-active" to="/favphotos">FAVФотографии</NavLink></li>
-      <li><NavLink activeClassName="is-active" to="/messages">Личные сообщения</NavLink></li>
-      <li><NavLink activeClassName="is-active" to="/groups">Группы</NavLink></li>
-      <li><NavLink activeClassName="is-active" to="/friends">Друзья</NavLink></li>
-      <li><NavLink activeClassName="is-active" to="/notes">Заметки</NavLink></li>
-      <li><NavLink activeClassName="is-active" to="/docs">Документы</NavLink></li>
-      <li><NavLink activeClassName="is-active" to="/videos">Видеозаписи</NavLink></li>
-      <li><NavLink activeClassName="is-active" to="/photos">Фотографии</NavLink></li>
+      <NavItemTab to={"/photos"} title={"Фотографии"} icon={"fa-camera"} />
+      <NavItemTab to={"/friends"} title={"Друзья"} icon={"fa-user"} />
+      <NavItemTab to={"/groups"} title={"Группы"} icon={"fa-users"} />
+      <NavItemTab to={"/videos"} title={"Видеозаписи"} icon={"fa-film"} />
+      <NavItemTab to={"/messages"} title={"Сообщения"} icon={"fa-commenting"} />
+      <NavItemTab to={"/wall"} title={"Стена"} icon={"fa-bars"} />
+      <NavItemTab to={"/favs"} title={"Закладки"} icon={"fa-heart"} />
+      <NavItemTab to={"/notes"} title={"Заметки"} icon={"fa-sticky-note"} />
+      <NavItemTab to={"/docs"} title={"Документы"} icon={"fa-file"} />
 
     </ul>
 

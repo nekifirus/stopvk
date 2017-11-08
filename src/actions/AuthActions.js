@@ -3,9 +3,16 @@ import {
   AUTHLINK_SET,
   AUTHLINK_PUSH,
   AUTHLINK_FAIL,
-  AUTHLINK_SUCCESS
+  AUTHLINK_SUCCESS,
+
+  APPID_SET,
+  APPID_PUSH,
+
+  LOGOUT
 } from '../constants/Auth'
 import jsonp from 'jsonp'
+
+import {setData, getToken, getUserId, removeAuth} from '../Utils/Storage';
 
 
 var auth = {
@@ -14,33 +21,31 @@ var auth = {
   'expires_in': ''
 }
 
-export function autorize() {
-  return function(dispatch) {
 
-    async function authrequest() {
-      return new Promise(function(resolve, reject) {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "http:localhost:8080/" + url);
-        xhr.onerror = function() {reject("Network error.")};
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-              console.log(xhr.response)
-              resolve(xhr.response)
-            }
-            else {reject("Loading error:" + xhr.statusText)}
-        };
-        xhr.send();
-      });
+
+
+export function initAuth () {
+  return function(dispatch, getState) {
+    const
+      state = getState(),
+      auth = state.auth;
+
+
+    let token = getToken();
+    let user_id = getUserId();
+
+    if(token && user_id) {
+      auth.user_id = user_id;
+      auth.access_token = token;
+      dispatch({type: AUTHLINK_PUSH, auth})
+
+      getUserInfo(dispatch, getState)
     }
-
-  let url = "https://oauth.vk.com/authorize?client_id=6151047&display=page&redirect_uri=https://oauth.vk.com/blank.html&scope=friends,photos,audio,video,pages,notes,messages,wall,docs,groups,offline&response_type=token&v=5.68&state=123456"
-
-  authrequest()
-    .then(resp => dispatch({type: AUTHLINK_SUCCESS, payload:resp}))
-    .catch(err => dispatch({type: AUTHLINK_FAIL, payload: err}))
 
   }
 }
+
+
 
 export function getUserInfo(dispatch, getState) {
 
@@ -115,10 +120,44 @@ export function pushLink(link) {
         auth[name] = mega(name)
       }
 
-      
+
+      setData(auth);
 
       dispatch({type: AUTHLINK_PUSH, auth})
 
       getUserInfo(dispatch, getState)
+    }
+  }
+
+
+
+  export function setId(id) {
+    return ({
+      type: APPID_SET,
+      payload: id
+    })
+  }
+
+  export function pushId() {
+    return function (dispatch, getState) {
+      const
+        state = getState(),
+        appId = state.auth.id;
+
+      let authlink = `https://oauth.vk.com/authorize?client_id=${appId}&display=page&redirect_uri=https://oauth.vk.com/blank.html&scope=friends,photos,audio,video,pages,notes,messages,wall,docs,groups&response_type=token&v=5.68&state=123456`
+
+      dispatch({
+        type: APPID_PUSH,
+        payload: authlink
+      })
+    }
+  }
+
+  export function logout() {
+    return function(dispatch) {
+      removeAuth();
+      dispatch({
+        type: LOGOUT
+      });
     }
   }

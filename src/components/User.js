@@ -1,28 +1,52 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import {Link} from 'react-router-dom';
 
 export default class User extends Component {
 
-
-
   render() {
-    const { error, info } = this.props
+    const { auth, logout } = this.props;
 
+    const LoginButton = (() => (
+      <Link
+        className="button is-info" to="/auth">
+        <span className="icon">
+          <i className="fa fa-vk"></i>
+        </span>
+        <span>Войти</span>
+      </Link>
+    ));
 
+    const UserPhoto = (({info}) => (
+      <div className="dropdown is-hoverable is-right">
 
-
-    return <div className="box">
-            <div className="level media">
-              <div className="level-left media-left">
-                <img className="image is-32-32 is-rounded" src={info.photo_50} alt='avatar'></img>
-              </div>
-              <div className="level-right media-content has-text-weight-bold">
-                <div className="content">
-                {info.first_name + " "} {info.last_name}
-                {error ? <p className='error'> {error}. <br /> Попробуйте еще раз.</p> : ''}
-                </div>
-              </div>
+          <div className="user-photo dropdown-trigger">
+            <img className="user-photo" src={info.photo_50} alt="avatar"></img>
+          </div>
+          <div className="dropdown-menu" id="dropdown1" role="menu">
+            <div className="dropdown-content has-text-centered">
+              <img className="" src={info.photo_50} alt="avatar" />
+              <a className="subtitle"
+                 href={"https://vk.com/id" + info.id} target="_blank">
+                {info.first_name} {info.last_name}
+              </a>
+              <hr className="dropdown-divider" />
+              <button onClick={logout} className="button is-danger">Выйти</button>
             </div>
           </div>
+      </div>
+    ));
+
+
+    return (
+      <div className="user-info">
+        {auth.access_token
+        ?
+          <UserPhoto info={auth.info} />
+        :
+          <LoginButton />
+        }
+      </div>
+    )
 
   }
 }

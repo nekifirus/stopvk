@@ -32,6 +32,26 @@ export default async function jsonpRequest(url) {
     throw (resp.error);
   } else if (resp.execute_errors) {
     console.log(resp.execute_errors);
+    if (Array.isArray(resp.execute_errors)) {
+      if (resp.execute_errors[0].error_code === 9) {
+        try {
+          setTimeout(function(){
+            jsonpRequest(url);
+          }, 888);
+        } catch (e) {
+          throw e;
+        }
+      }
+    }
+    if (resp.execute_errors.error_code === 9) {
+      try {
+        setTimeout(function(){
+          jsonpRequest(url);
+        }, 888);
+      } catch (e) {
+        throw e;
+      }
+    }
     throw (resp.execute_errors)
   }
   console.log(resp.response)

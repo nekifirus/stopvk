@@ -15,7 +15,7 @@ function downloadBlob(url) {
 
     try {
             var xhr = new XMLHttpRequest();
-            xhr.open("GET", "http://192.168.1.39:8080/" + url);
+            xhr.open("GET", "http://cors.stopvk.party/" + url);
             xhr.responseType = "blob";
             xhr.onerror = function() {reject("Network error.")};
             xhr.onload = function() {

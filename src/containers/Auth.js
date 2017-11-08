@@ -10,10 +10,17 @@ class Auth extends Component {
 
   render() {
     const {auth} = this.props
-    const {setLink, pushLink} = this.props.authActions
+    const {setLink, pushLink, setId, pushId, initAuth} = this.props.authActions
 
     return <div>
-      <Authform auth={auth} setLink={setLink} pushLink={pushLink} />
+      <Authform
+        auth={auth}
+        setId={setId}
+        pushId={pushId}
+        setLink={setLink}
+        pushLink={pushLink}
+        initAuth={initAuth}
+      />
     </div>
   }
 }

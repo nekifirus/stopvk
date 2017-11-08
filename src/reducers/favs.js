@@ -43,58 +43,25 @@ import {
   FAVMARKITDEL_SUCCESS,
   FAVMARKITDEL_FAIL,
 
-  //favs photo
-  FAVPHOTO_REQUEST,
-  FAVPHOTO_SUCCESS,
-  FAVPHOTO_FAIL,
-
-  FAVPHOTO_SHOWGALERY,
-  FAVPHOTO_SHOWMORE,
-  FAVPHOTO_SELECTIMAGE,
-  FAVPHOTO_SELECTALL,
-
-  FAVPHOTODEL_REQUEST,
-  FAVPHOTODEL_SUCCESS,
-  FAVPHOTODEL_FAIL,
-
-  //captcha
-
-  CAPTCHA_NEEDED,
-  CAPTCHA_SET,
-  CAPTCHA_CANCEL,
-  CAPTCHA_SUBMITED
+  
 
 } from '../constants/Favs';
 
 const initialState = {
   linkarr: [],
-  linklength: '',
 
   userarr: [],
-  userlength: '',
 
   videoarr: [],
-  videolength: '',
 
   postsarr: [],
-  postslength: '',
 
   markitarr: '',
-  markitlength: '',
 
-  photoarrorig: [],
-  photoarr: [],
-  photolength: '',
-  gallerytrigger: false,
 
   fetching: false,
   fetchmessage: '',
-  completemess: '',
-
-  captcha_img: '',
-  captcha_sid: '',
-  captcha_key: '',
-  captcha_params: '',
+  percent: '',
 
   error: ''
 }
@@ -105,20 +72,20 @@ export default function favs(state = initialState, action) {
     //ссылки из избранного
     case FAVLINKS_REQUEST:
       return {...state,
-              linklength: action.payload,
+              percent: action.payload,
               fetching: true,
-              fetchmessage: "Получаю список ссылок в закладках",
-              completemess: '',
-              error: ''
+              fetchmessage: "Получаю список ссылок в закладках"
       };
 
     case FAVLINKS_SUCCESS:
       return {...state, fetching: false,
               linkarr: action.payload,
-              linklength: action.payload.length };
+      };
 
     case FAVLINKS_FAIL:
       return {...state, error: action.payload, fetching: false };
+
+
 
     case FAVLINKSDEL_REQUEST:
       return {...state,
@@ -140,24 +107,24 @@ export default function favs(state = initialState, action) {
     //пользователи из избранного
     case FAVUSER_REQUEST:
       return {...state,
-              userlength: action.payload,
+              percent: action.payload,
               fetching: true,
-              fetchmessage: "Получаю список пользователей в закладках",
-              completemess: '',
-              error: ''
+              fetchmessage: "Получаю список пользователей в закладках"
       };
 
     case FAVUSER_SUCCESS:
       return {...state, fetching: false,
-              userarr: action.payload,
-              userlength: action.payload.length };
+              userarr: action.payload
+      };
 
     case FAVUSER_FAIL:
       return {...state, error: action.payload, fetching: false };
 
+
+
     case FAVUSERDEL_REQUEST:
       return {...state,
-              userlength: action.payload,
+              percent: action.payload,
               fetching: true,
               fetchmessage: "Удаляю пользователей из закладок"
       };
@@ -165,8 +132,7 @@ export default function favs(state = initialState, action) {
     case FAVUSERDEL_SUCCESS:
       return {...state,
               fetching: false,
-              userlength: 0,
-              completemess: "В закладках больше нет пользователей"
+              userarr: action.payload
       };
 
     case FAVUSERDEL_FAIL:
@@ -177,24 +143,23 @@ export default function favs(state = initialState, action) {
 
     case FAVVIDEO_REQUEST:
       return {...state,
-              videolength: action.payload,
+              percent: action.payload,
               fetching: true,
-              fetchmessage: "Получаю список видеозаписей в закладках",
-              completemess: '',
-              error: ''
+              fetchmessage: "Получаю список видеозаписей в закладках"
       };
 
     case FAVVIDEO_SUCCESS:
       return {...state, fetching: false,
-              videoarr: action.payload,
-              videolength: action.payload.length };
+              videoarr: action.payload
+      };
 
     case FAVVIDEO_FAIL:
       return {...state, error: action.payload, fetching: false };
 
+
     case FAVVIDEODEL_REQUEST:
       return {...state,
-              videolength: action.payload,
+              percent: action.payload,
               fetching: true,
               fetchmessage: "Удаляю видеозаписи из закладок"
       };
@@ -202,8 +167,7 @@ export default function favs(state = initialState, action) {
     case FAVVIDEODEL_SUCCESS:
       return {...state,
               fetching: false,
-              videolength: 0,
-              completemess: "В закладках больше нет видеозаписей"
+              videoarr: action.payload
       };
 
     case FAVVIDEODEL_FAIL:
@@ -214,24 +178,23 @@ export default function favs(state = initialState, action) {
     // favs posts
     case FAVPOSTS_REQUEST:
         return {...state,
-                postslength: action.payload,
+                percent: action.payload,
                 fetching: true,
-                fetchmessage: "Получаю список постов в закладках",
-                completemess: '',
-                error: ''
+                fetchmessage: "Получаю список постов в закладках"
         };
 
       case FAVPOSTS_SUCCESS:
         return {...state, fetching: false,
-                postsarr: action.payload,
-                postslength: action.payload.length };
+                postsarr: action.payload
+        };
 
       case FAVPOSTS_FAIL:
         return {...state, error: action.payload, fetching: false };
 
+
       case FAVPOSTSDEL_REQUEST:
         return {...state,
-                postslength: action.payload,
+                percent: action.payload,
                 fetching: true,
                 fetchmessage: "Удаляю посты из закладок"
         };
@@ -239,8 +202,7 @@ export default function favs(state = initialState, action) {
       case FAVPOSTSDEL_SUCCESS:
         return {...state,
                 fetching: false,
-                postslength: 0,
-                completemess: "В закладках больше нет постов"
+                postsarr: action.payload
         };
 
       case FAVPOSTSDEL_FAIL:
@@ -252,121 +214,36 @@ export default function favs(state = initialState, action) {
       //marketitem
       case FAVMARKIT_REQUEST:
         return {...state,
-                markitlength: action.payload,
+                percent: action.payload,
                 fetching: true,
                 fetchmessage: "Получаю список товаров в закладках",
-                completemess: '',
-                error: ''
         };
 
       case FAVMARKIT_SUCCESS:
         return {...state, fetching: false,
-                markitarr: action.payload,
-                markitlength: action.payload.length };
+                markitarr: action.payload
+        };
 
       case FAVMARKIT_FAIL:
         return {...state, error: action.payload, fetching: false };
 
+
       case FAVMARKITDEL_REQUEST:
         return {...state,
-                markitlength: action.payload,
+                percent: action.payload,
                 fetching: true,
                 fetchmessage: "Удаляю товары из закладок"
-      };
+        };
 
       case FAVMARKITDEL_SUCCESS:
         return {...state,
                 fetching: false,
-                markitlength: 0,
+                markitarr: action.payload,
                 completemess: "В закладках больше нет товаров"
         };
 
       case FAVMARKITDEL_FAIL:
         return {...state, fetching: false, error: action.payload};
-
-
-      //photo
-      case FAVPHOTO_REQUEST:
-        return {...state,
-                photolength: action.payload,
-                fetching: true,
-                fetchmessage: "Получаю список фотографий в закладках",
-                completemess: '',
-                error: ''
-        };
-
-      case FAVPHOTO_SUCCESS:
-        return {...state, fetching: false,
-                photoarrorig: action.payload,
-                photolength: action.payload.length };
-
-      case FAVPHOTO_FAIL:
-        return {...state, error: action.payload, fetching: false };
-
-
-      case FAVPHOTO_SHOWGALERY:
-        return {...state, gallerytrigger: action.payload};
-
-      case FAVPHOTO_SHOWMORE:
-        return {...state, photoarr: action.arr, photoarrorig: action.orig };
-
-      case FAVPHOTO_SELECTIMAGE:
-        return {...state, photoarr: action.payload };
-
-      case FAVPHOTO_SELECTALL:
-        return {...state, photoarr: action.arr, photoarrorig: action.orig };
-
-      case FAVPHOTODEL_REQUEST:
-        return {...state,
-                photolength: action.payload,
-                fetching: true,
-                fetchmessage: "Удаляю фотографии из закладок"
-      };
-
-      case FAVPHOTODEL_SUCCESS:
-        return {...state,
-                fetching: false,
-                photolength: 0,
-                completemess: "В закладках больше нет фотографий"
-        };
-
-      case FAVPHOTODEL_FAIL:
-        return {...state, fetching: false, error: action.payload};
-
-
-
-
-
-
-      //captcha
-      case CAPTCHA_NEEDED:
-        return {...state,
-                captcha_img: action.img,
-                captcha_sid: action.sid,
-                captcha_params: action.params
-        };
-
-      case CAPTCHA_SET:
-        return {...state, captcha_key: action.payload };
-
-      case CAPTCHA_CANCEL:
-        return {...state,
-                captcha_key: '',
-                captcha_img: '',
-                captcha_sid: '',
-                captcha_params: '',
-                fetching: false
-        };
-
-      case CAPTCHA_SUBMITED:
-        return {...state,
-                captcha_img: '',
-                captcha_sid: '',
-                captcha_key: '',
-                captcha_params: ''
-        };
-
-
 
 
     default:

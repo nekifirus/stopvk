@@ -124,6 +124,27 @@
 
 }
 
+
+
+.user-info {
+  margin: 5px;
+}
+
+.user-photo {
+  border-radius: 30px;
+  width: 40px;
+  height: 40px;
+
+}
+
+.navbar {
+  margin-bottom: 30px;
+}
+
+
+
+
+
 .is-invisible {
   display: none !important;
 }

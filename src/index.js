@@ -18,7 +18,6 @@ import Layout from './components/Layout'
 import registerServiceWorker from './registerServiceWorker';
 
 import About from './components/About.js';
-import Jumbotron from './components/Jumbotron';
 
 import Wall from './containers/Wall';
 import Favs from './containers/Favs';
@@ -30,7 +29,7 @@ import Docs from './containers/Docs';
 import Videos from './containers/Videos';
 import Photos from './containers/Photos';
 
-import Gallery from './containers/Gallery';
+
 
 
 
@@ -41,29 +40,30 @@ render(
   <Provider store={store}>
     <Router history={history}>
       <Switch>
-        <Route exact path="/intro" component={Jumbotron} />
 
-      <Layout>
-          <Route exact path ="/" component={App} />
-          <App>
-            <Route exact path="/auth" component={Auth} />
-            <Route exact path="/wall" component={Wall} />
-            <Route exact path="/favs" component={Favs} />
-            <Route exact path="/messages" component={Mess} />
-            <Route exact path="/favphotos" component={Gallery} />
-            <Route exact path="/groups" component={Groups} />
-            <Route exact path="/friends" component={Friends} />
-            <Route exact path="/notes" component={Notes} />
-            <Route exact path="/docs" component={Docs} />
-            <Route exact path="/videos" component={Videos} />
-            <Route exact path="/photos" component={Photos} />
+            <Route path="/auth" component={Auth} />
+            <Route path="/about" component={About} />
+            <Route exact path ="/" component={App} />
 
-          </App>
-
-          <Route path="/about" component={About} />
+          <Layout>
+            <App>
 
 
-      </Layout>
+
+              <Route exact path="/wall" component={Wall} />
+              <Route exact path="/favs" component={Favs} />
+              <Route exact path="/messages" component={Mess} />
+              <Route exact path="/groups" component={Groups} />
+              <Route exact path="/friends" component={Friends} />
+              <Route exact path="/notes" component={Notes} />
+              <Route exact path="/docs" component={Docs} />
+              <Route exact path="/videos" component={Videos} />
+              <Route exact path="/photos" component={Photos} />
+
+            </App>
+
+          </Layout>
+
       </Switch>
     </Router>
   </Provider>,

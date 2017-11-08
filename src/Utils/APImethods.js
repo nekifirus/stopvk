@@ -38,6 +38,16 @@ export function apiUnLike(type, owner_id, item_id) {
   `;
 }
 
+export function apiFaveDelLink(link) {
+  return `
+    API.fave.removeLink({"link_id": ${link.id}});
+  `
+}
+
+export function apiFaveDelUser(user) {
+  return `API.fave.removeUser({"user_id": ${user.id}})`
+}
+
 export function apiUnFriend(friend) {
   return `
     API.friends.delete({"user_id":${friend.id}});

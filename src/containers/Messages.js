@@ -16,7 +16,7 @@ class Mess extends Component {
     } = this.props.messActions;
 
     return (
-      <div className="box">
+      <div className="">
         <FavView
           title="Диалогов:"
           arr={mess.dialogsarr}

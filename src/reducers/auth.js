@@ -2,30 +2,29 @@ import {
   AUTHLINK_SET,
   AUTHLINK_PUSH,
   AUTHLINK_FAIL,
-  AUTHLINK_SUCCESS
+  AUTHLINK_SUCCESS,
+
+  APPID_SET,
+  APPID_PUSH,
+
+  LOGOUT
 } from '../constants/Auth'
 
-const back = {
-  user_id: '1518656',
-  access_token: '04e3bed827679e9412156404da1471471031c8357ea6fd3e64ee8439eae83dd15904b655ff8f86bdadc02',
-  info: {
-    first_name: 'Никита',
-    last_name: 'Мистюков',
-    photo_50: 'https://pp.userapi.com/c627127/v627127656/33d3d/yj6GBDhYK7k.jpg'
-  }
-}
+
 
 const initialState = {
-  user_id: '1518656',
-  access_token: '04e3bed827679e9412156404da1471471031c8357ea6fd3e64ee8439eae83dd15904b655ff8f86bdadc02',
+  user_id: '',
+  access_token: '',
   expires_in: '0',
   isValid: false,
   error: false,
   link: '',
+  id: '',
+  authlink: '',
   info: {
-    first_name: 'Никита',
-    last_name: 'Мистюков',
-    photo_50: 'https://pp.userapi.com/c627127/v627127656/33d3d/yj6GBDhYK7k.jpg'
+    first_name: '',
+    last_name: '',
+    photo_50: ''
   }
 }
 
@@ -61,6 +60,16 @@ export default function auth(state = initialState, action) {
 
       }
     }
+
+    case APPID_SET:
+      return { ...state, id: action.payload }
+
+    case APPID_PUSH:
+      return { ...state, authlink: action.payload }
+
+
+    case LOGOUT:
+      return {...state, user_id: '', access_token: '', info: ''}
 
     default:
       return state

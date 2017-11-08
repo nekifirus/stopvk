@@ -19,7 +19,7 @@ export class FavView extends React.Component {
     } = this.props;
 
   return (
-    <div>
+    <div className="box">
       <div className="subtitle has-text-centered">{title}</div>
       <Counters all={arr.length} />
       <GroupButtons del={del} />
